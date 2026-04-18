@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nearest Medical - DIU Student Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.7);
+            font-size: 1rem;
+        }
+
+        .search-section {
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            background: rgba(255,255,255,0.9);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            background: white;
+        }
+
+        .search-box button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            padding: 0 25px;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.15);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-card h3 {
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85rem;
+        }
+
+        .medical-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 25px;
+        }
+
+        .medical-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .medical-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 20px;
+            color: white;
+        }
+
+        .card-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .distance-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-top: 8px;
+        }
+
+        .emergency-badge {
+            display: inline-block;
+            background: #f44336;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-icon {
+            width: 35px;
+            color: #667eea;
+            font-size: 1rem;
+        }
+
+        .info-text {
+            flex: 1;
+            color: #333;
+            font-size: 0.85rem;
+        }
+
+        .info-text strong {
+            color: #555;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .call-btn, .doctor-btn, .serial-btn {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .doctor-btn {
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+        }
+
+        .serial-btn {
+            background: linear-gradient(135deg, #4caf50, #388e3c);
+        }
+
+        .call-btn:hover, .doctor-btn:hover, .serial-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.2rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .doctor-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 3px solid #667eea;
+        }
+
+        .doctor-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .doctor-specialty {
+            font-size: 0.8rem;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .doctor-details {
+            font-size: 0.75rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .schedule {
+            background: #e8f5e9;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            margin-top: 8px;
+        }
+
+        .serial-form {
+            margin-top: 15px;
+        }
+
+        .serial-form input, .serial-form select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .submit-serial {
+            background: linear-gradient(135deg, #4caf50, #388e3c);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            background: white;
+            border-radius: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            .medical-grid {
+                grid-template-columns: 1fr;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-hospital-user"></i> Nearest Medical Centers</h1>
+            <p>24/7 Healthcare facilities near DIU Campus</p>
+        </div>
+
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search by hospital name, doctor name, or specialty..." onkeyup="searchHospitals()">
+                <button onclick="searchHospitals()"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-icon">🏥</div><h3 id="totalHospitals">5+</h3><p>Medical Centers</p></div>
+            <div class="stat-card"><div class="stat-icon">🚑</div><h3>24/7</h3><p>Emergency Service</p></div>
+            <div class="stat-card"><div class="stat-icon">👨‍⚕️</div><h3 id="totalDoctors">35+</h3><p>Expert Doctors</p></div>
+            <div class="stat-card"><div class="stat-icon">⭐</div><h3>4.5</h3><p>Average Rating</p></div>
+        </div>
+
+        <div class="medical-grid" id="medicalGrid"></div>
+
+        <div class="footer">
+            <p>© 2026 - Developed by Shovon Server | Daffodil International University</p>
+            <p style="margin-top: 5px;"><i class="fas fa-ambulance"></i> In case of emergency, call 999 or 16233</p>
+        </div>
+    </div>
+
+    <!-- Doctors Modal -->
+    <div id="doctorsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="doctorsModalTitle">Available Doctors</h3>
+                <button class="close-modal" onclick="closeDoctorsModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="doctorsList"></div>
+        </div>
+    </div>
+
+    <!-- Book Serial Modal -->
+    <div id="serialModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Book Appointment (Serial)</h3>
+                <button class="close-modal" onclick="closeSerialModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="serialDoctorInfo"></div>
+                <div class="serial-form">
+                    <input type="text" id="patientName" placeholder="Your Full Name">
+                    <input type="text" id="patientPhone" placeholder="Phone Number">
+                    <input type="email" id="patientEmail" placeholder="Email Address">
+                    <select id="appointmentDate">
+                        <option value="">Select Date</option>
+                        <option value="Today">Today</option>
+                        <option value="Tomorrow">Tomorrow</option>
+                        <option value="Day After Tomorrow">Day After Tomorrow</option>
+                    </select>
+                    <select id="appointmentTime">
+                        <option value="">Select Time Slot</option>
+                        <option value="09:00 AM">09:00 AM</option>
+                        <option value="10:00 AM">10:00 AM</option>
+                        <option value="11:00 AM">11:00 AM</option>
+                        <option value="12:00 PM">12:00 PM</option>
+                        <option value="02:00 PM">02:00 PM</option>
+                        <option value="03:00 PM">03:00 PM</option>
+                        <option value="04:00 PM">04:00 PM</option>
+                        <option value="05:00 PM">05:00 PM</option>
+                        <option value="06:00 PM">06:00 PM</option>
+                        <option value="07:00 PM">07:00 PM</option>
+                        <option value="08:00 PM">08:00 PM</option>
+                    </select>
+                    <button class="submit-serial" onclick="bookSerial()">Confirm Appointment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Doctors Data
+        const doctorsData = {
+            "DIU Medical Center": [
+                { name: "Dr. Md. Abdur Rahman", specialty: "MBBS, FCPS (Medicine)", experience: "15 years", schedule: "Sat-Wed: 10AM - 2PM", chamber: "Room 101", expertise: ["General Medicine", "Fever", "Chest Problems"], fee: "500 TK" },
+                { name: "Dr. Fatema Begum", specialty: "MBBS, DGO (Gynecology)", experience: "12 years", schedule: "Sat-Thu: 3PM - 6PM", chamber: "Room 102", expertise: ["Women's Health", "Pregnancy Care"], fee: "600 TK" },
+                { name: "Dr. Shahidul Islam", specialty: "MBBS, BCS (Health)", experience: "10 years", schedule: "Sun-Thu: 9AM - 1PM", chamber: "Room 103", expertise: ["Pediatrics", "Child Nutrition"], fee: "500 TK" }
+            ],
+            "Enam Medical College & Hospital": [
+                { name: "Prof. Dr. Abul Kalam Azad", specialty: "MBBS, MD (Cardiology)", experience: "25 years", schedule: "Sun-Tue: 10AM - 1PM", chamber: "Cardiology Dept", expertise: ["Heart Disease", "Hypertension"], fee: "1200 TK" },
+                { name: "Dr. Salma Khatun", specialty: "MBBS, FCPS (Surgery)", experience: "18 years", schedule: "Sat-Wed: 2PM - 5PM", chamber: "Surgery Dept", expertise: ["General Surgery"], fee: "1000 TK" }
+            ],
+            "National Heart Institute": [
+                { name: "Dr. Manarjan Khan", specialty: "MBBS (DMC), MCP (Cardiology)", experience: "15 years", schedule: "Saturday: 4PM - 7PM", chamber: "National Heart Institute", expertise: ["Heart Disease", "Blood Pressure"], fee: "1000 TK" },
+                { name: "Dr. Md. Sharowar Hossain", specialty: "MBBS, D-Card (Cardiology)", experience: "12 years", schedule: "Saturday: 3PM - 6PM", chamber: "National Heart Institute", expertise: ["Cardiology"], fee: "800 TK" }
+            ],
+            "Sajr Gramtham Hospital": [
+                { name: "Dr. Khaleda Khatun", specialty: "MBBS, FCPS, DGO", experience: "Gynecology Specialist", schedule: "Daily: 11AM - 2PM, 5:30PM - 7:30PM", chamber: "Sajr Gramtham Hospital", expertise: ["Gynecology", "Obstetrics"], fee: "800 TK" },
+                { name: "Dr. Nasima Begum", specialty: "MBBS, FCPS, DMEd (UK)", experience: "Gynecology Specialist", schedule: "Thursday: 5PM - 6PM", chamber: "Sajr Gramtham Hospital", expertise: ["Complex Gynecology"], fee: "1000 TK" },
+                { name: "Dr. Umme Samida", specialty: "MBBS, DM (Diabetes)", experience: "Diabetes Specialist", schedule: "Sat & Tue: 4PM - 6PM", chamber: "Sajr Gramtham Hospital", expertise: ["Diabetes", "Thyroid"], fee: "700 TK" },
+                { name: "Dr. H M Nazmul Ahsan", specialty: "MBBS, BCS, FCPS (Medicine)", experience: "Medicine Specialist", schedule: "Sat, Mon, Wed, Thu: 5PM - 6PM", chamber: "Sajr Gramtham Hospital", expertise: ["General Medicine"], fee: "600 TK" },
+                { name: "Dr. Md. Mahbub Islam", specialty: "MBBS, BCS, MRCP", experience: "Gastro Specialist", schedule: "Friday: 10AM - 5PM", chamber: "Sajr Gramtham Hospital", expertise: ["Gastro", "Liver Disease"], fee: "800 TK" }
+            ],
+            "Remety General Hospital": [
+                { name: "Dr. Momota Farzana", specialty: "MBBS (DU), MRCOG (London)", experience: "Gynecology Specialist", schedule: "Sun & Tue: 5PM - 7PM", chamber: "Remety Hospital", expertise: ["Gynecology", "Obstetrics"], fee: "700 TK" },
+                { name: "Dr. S.M. Nazmul Haque", specialty: "MBBS", experience: "Medicine Specialist", schedule: "Mon & Wed: 10AM - 5PM", chamber: "Remety Hospital", expertise: ["Medicine", "Diabetes"], fee: "600 TK" },
+                { name: "Dr. Tahumina Akhter", specialty: "MBBS (DU), FCPS (FP)", experience: "Gynecology", schedule: "Sunday: 5PM - 7PM", chamber: "Remety Hospital", expertise: ["Women's Health"], fee: "600 TK" },
+                { name: "Dr. Tanvin Suhiti", specialty: "MBBS (UMU)", experience: "Medicine & Gynecology", schedule: "Saturday: 10AM - 5PM", chamber: "Remety Hospital", expertise: ["Medicine", "Gynecology"], fee: "600 TK" }
+            ]
+        };
+
+        // Hospital Data
+        const medicalData = [
+            { name: "DIU Medical Center", type: "University Clinic", address: "Inside DIU Campus, Ashulia", distance: "0.2 km", hours: "24/7", phone: "+880 1712345678", emergency: true, services: ["General Checkup", "First Aid", "Emergency", "Pharmacy"], rating: 4.8 },
+            { name: "Enam Medical College & Hospital", type: "Full Hospital", address: "Ashulia, Savar", distance: "1.8 km", hours: "24/7 Emergency", phone: "+880 29690212", emergency: true, services: ["ICU", "Surgery", "Cardiology", "Emergency"], rating: 4.6 },
+            { name: "National Heart Institute", type: "Cardiology Hospital", address: "Sher-e-Bangla Nagar, Dhaka", distance: "12 km", hours: "24/7 Emergency", phone: "+880 29660212", emergency: true, services: ["Cardiology", "Heart Surgery", "Cath Lab"], rating: 4.9 },
+            { name: "Sajr Gramtham Hospital", type: "Multi-specialty", address: "A/18, Khana Road, Savar, Dhaka-1340", distance: "3.5 km", hours: "24/7", phone: "01752361542", emergency: true, services: ["Medicine", "Gynecology", "Surgery", "Cardiology"], rating: 4.5 },
+            { name: "Remety General Hospital", type: "General Hospital", address: "Abinia Tower, Abinia Bazar, Dhaka", distance: "4.0 km", hours: "24/7", phone: "01725911811", emergency: true, services: ["Medicine", "Gynecology", "Orthopedics", "Diabetes"], rating: 4.4 }
+        ];
+
+        let currentDoctor = null;
+
+        function updateStats() {
+            document.getElementById('totalHospitals').innerHTML = medicalData.length + "+";
+            let totalDocs = 0;
+            for (let hospital in doctorsData) {
+                totalDocs += doctorsData[hospital].length;
+            }
+            document.getElementById('totalDoctors').innerHTML = totalDocs + "+";
+        }
+
+        function renderMedicalCenters(filterTerm = "") {
+            const grid = document.getElementById('medicalGrid');
+            let filteredData = medicalData;
+            
+            if (filterTerm) {
+                filteredData = medicalData.filter(center => 
+                    center.name.toLowerCase().includes(filterTerm.toLowerCase()) ||
+                    center.address.toLowerCase().includes(filterTerm.toLowerCase()) ||
+                    center.services.some(s => s.toLowerCase().includes(filterTerm.toLowerCase()))
+                );
+            }
+            
+            if (filteredData.length === 0) {
+                grid.innerHTML = '<div class="no-results">😔 No hospitals found matching your search. Please try another keyword.</div>';
+                return;
+            }
+            
+            grid.innerHTML = filteredData.map(center => {
+                const doctorCount = doctorsData[center.name] ? doctorsData[center.name].length : 0;
+                return `
+                    <div class="medical-card">
+                        <div class="card-header">
+                            <h3>${center.name} ${center.emergency ? '<span class="emergency-badge"><i class="fas fa-ambulance"></i> Emergency</span>' : ''}</h3>
+                            <span class="distance-badge"><i class="fas fa-map-marker-alt"></i> ${center.distance} from DIU Campus</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-row"><div class="info-icon"><i class="fas fa-map-marker-alt"></i></div><div class="info-text"><strong>📍 Address:</strong> ${center.address}</div></div>
+                            <div class="info-row"><div class="info-icon"><i class="fas fa-clock"></i></div><div class="info-text"><strong>🕐 Hours:</strong> ${center.hours}</div></div>
+                            <div class="info-row"><div class="info-icon"><i class="fas fa-phone-alt"></i></div><div class="info-text"><strong>📞 Phone:</strong> ${center.phone}</div></div>
+                            <div class="info-row"><div class="info-icon"><i class="fas fa-star"></i></div><div class="info-text"><strong>⭐ Rating:</strong> ${center.rating} / 5.0</div></div>
+                            <div class="info-row"><div class="info-icon"><i class="fas fa-stethoscope"></i></div><div class="info-text"><strong>🩺 Services:</strong> ${center.services.join(", ")}</div></div>
+                            <div class="btn-group">
+                                <button class="call-btn" onclick="makeCall('${center.phone}')"><i class="fas fa-phone"></i> Call Now</button>
+                                <button class="doctor-btn" onclick="showDoctors('${center.name}')"><i class="fas fa-user-md"></i> View Doctors (${doctorCount})</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function searchHospitals() {
+            const searchTerm = document.getElementById('searchInput').value;
+            renderMedicalCenters(searchTerm);
+        }
+
+        function makeCall(phone) {
+            window.location.href = `tel:${phone}`;
+        }
+
+        function showDoctors(hospitalName) {
+            const doctors = doctorsData[hospitalName] || [];
+            document.getElementById('doctorsModalTitle').innerHTML = `👨‍⚕️ Doctors at ${hospitalName} (${doctors.length} doctors)`;
+            
+            let doctorsHtml = '';
+            doctors.forEach(doctor => {
+                doctorsHtml += `
+                    <div class="doctor-card">
+                        <div class="doctor-name"><i class="fas fa-user-md"></i> ${doctor.name}</div>
+                        <div class="doctor-specialty">${doctor.specialty}</div>
+                        <div class="doctor-details"><i class="fas fa-briefcase"></i> Experience: ${doctor.experience}</div>
+                        <div class="doctor-details"><i class="fas fa-clock"></i> Schedule: ${doctor.schedule}</div>
+                        <div class="doctor-details"><i class="fas fa-stethoscope"></i> Expertise: ${doctor.expertise.join(", ")}</div>
+                        <div class="doctor-details"><i class="fas fa-money-bill-wave"></i> Fee: ${doctor.fee}</div>
+                        <div class="schedule"><i class="fas fa-map-marker-alt"></i> Chamber: ${doctor.chamber}</div>
+                        <button class="serial-btn" style="margin-top: 12px; width: 100%;" onclick="bookSerialWithDoctor('${hospitalName}', '${doctor.name}', '${doctor.specialty}')">
+                            <i class="fas fa-calendar-check"></i> Book Appointment (Serial)
+                        </button>
+                    </div>
+                `;
+            });
+            
+            if (doctors.length === 0) {
+                doctorsHtml = '<p style="text-align:center; padding:20px;">No doctor information available for this center.</p>';
+            }
+            
+            document.getElementById('doctorsList').innerHTML = doctorsHtml;
+            document.getElementById('doctorsModal').style.display = 'flex';
+        }
+
+        function bookSerialWithDoctor(hospitalName, doctorName, specialty) {
+            currentDoctor = { hospital: hospitalName, name: doctorName, specialty: specialty };
+            document.getElementById('serialDoctorInfo').innerHTML = `
+                <div class="doctor-card" style="margin-bottom: 15px;">
+                    <div class="doctor-name"><i class="fas fa-hospital"></i> ${hospitalName}</div>
+                    <div class="doctor-name"><i class="fas fa-user-md"></i> ${doctorName}</div>
+                    <div class="doctor-specialty">${specialty}</div>
+                </div>
+            `;
+            document.getElementById('serialModal').style.display = 'flex';
+            closeDoctorsModal();
+        }
+
+        function bookSerial() {
+            const name = document.getElementById('patientName').value;
+            const phone = document.getElementById('patientPhone').value;
+            const email = document.getElementById('patientEmail').value;
+            const date = document.getElementById('appointmentDate').value;
+            const time = document.getElementById('appointmentTime').value;
+            
+            if (!name || !phone || !date || !time) {
+                alert('Please fill all required fields!');
+                return;
+            }
+            
+            const appointmentId = 'APT' + Math.floor(Math.random() * 1000000);
+            const message = `✅ Appointment Confirmed!\n\n📋 Appointment ID: ${appointmentId}\n🏥 Hospital: ${currentDoctor.hospital}\n👨‍⚕️ Doctor: ${currentDoctor.name}\n📅 Date: ${date}\n⏰ Time: ${time}\n👤 Patient: ${name}\n📞 Phone: ${phone}\n📧 Email: ${email}\n\n💡 Please reach 15 minutes before the scheduled time.\n🚑 For emergency, call 999.`;
+            
+            alert(message);
+            
+            document.getElementById('patientName').value = '';
+            document.getElementById('patientPhone').value = '';
+            document.getElementById('patientEmail').value = '';
+            document.getElementById('appointmentDate').value = '';
+            document.getElementById('appointmentTime').value = '';
+            
+            closeSerialModal();
+        }
+
+        function closeDoctorsModal() {
+            document.getElementById('doctorsModal').style.display = 'none';
+        }
+
+        function closeSerialModal() {
+            document.getElementById('serialModal').style.display = 'none';
+            currentDoctor = null;
+        }
+
+        updateStats();
+        renderMedicalCenters();
+    </script>
+</body>
+</html>

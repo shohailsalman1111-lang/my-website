@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teaching Evaluation - DIU Student Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        .header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: white;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            display: inline-block;
+        }
+
+        /* Semester Selector */
+        .semester-selector {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .semester-selector label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .semester-selector select {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95em;
+            background: white;
+            cursor: pointer;
+            min-width: 200px;
+        }
+
+        .semester-selector select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-search {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            overflow-x: auto;
+            display: block;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        .data-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        /* Status Badges */
+        .status-submitted {
+            color: #4caf50;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            color: #ff9800;
+            font-weight: 600;
+        }
+
+        /* Evaluate Button */
+        .eval-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .eval-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 3px 10px rgba(102,126,234,0.3);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 25px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 25px 25px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.3em;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        /* Question Card */
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .question-card p {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .rating-option {
+            display: inline-block;
+            margin-right: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .rating-option input {
+            margin-right: 5px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-top: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 0.95em;
+            resize: vertical;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            width: 100%;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85em;
+        }
+
+        @media (max-width: 768px) {
+            .header { flex-direction: column; text-align: center; gap: 15px; }
+            .semester-selector { flex-direction: column; align-items: stretch; }
+            .data-table th, .data-table td { padding: 8px 10px; font-size: 0.8em; }
+            .rating-option { display: block; margin-bottom: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📝 Teaching Evaluation | Shovon Server</h1>
+            <div class="user-info">
+                <span>Welcome, <strong>Shohail Rana</strong></span>
+                <div class="avatar">S</div>
+            </div>
+        </div>
+
+        <!-- Main Card -->
+        <div class="card">
+            <h2>⭐ Course-wise Teaching Evaluation</h2>
+            
+            <!-- Semester Selector -->
+            <div class="semester-selector">
+                <label>📅 Select Semester:</label>
+                <select id="semesterSelect">
+                    <option value="Spring 2026">Spring 2026, 261</option>
+                    <option value="Fall 2025">Fall 2025, 253</option>
+                </select>
+                <button class="btn-search" onclick="loadEvaluationData()">🔍 Search</button>
+            </div>
+
+            <!-- Evaluation Table -->
+            <div id="evaluationTable">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Submit Status</th>
+                            <th>Course Code</th>
+                            <th>Course Title</th>
+                            <th>Teacher</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr><td colspan="5" style="text-align:center">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2026 - Developed by Shovon Server | Daffodil International University</p>
+        </div>
+    </div>
+
+    <!-- Evaluation Modal -->
+    <div id="evalModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📝 Course Evaluation Form</h3>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="evalQuestions">
+                <!-- Questions will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample Data
+        let teachingEval = JSON.parse(localStorage.getItem('teaching_eval_shovon')) || {};
+
+        const studentData = {
+            name: 'Shohail Rana',
+            id: '0242420005104192',
+            courses: {
+                'Spring 2026': [
+                    { code: 'CSE228', title: 'Theory of Computation', credit: 3, teacher: 'Rowzatu Zannat' },
+                    { code: 'CSE227', title: 'Systems Analysis and Design', credit: 3, teacher: 'Most. Hasna Hena' },
+                    { code: 'CSE225', title: 'Data Communication', credit: 3, teacher: 'Zakia Sultana Zakia' },
+                    { code: 'CSE224', title: 'Digital Logic Design Lab', credit: 1.5, teacher: 'Engr. Golam Rabbany' },
+                    { code: 'CSE223', title: 'Digital Logic Design', credit: 3, teacher: 'Engr. Golam Rabbany' }
+                ],
+                'Fall 2025': [
+                    { code: 'CSE221', title: 'Object Oriented Programming', credit: 3, teacher: 'Hasnur Jahan' },
+                    { code: 'CSE222', title: 'OOP Lab', credit: 1.5, teacher: 'Hasnur Jahan' },
+                    { code: 'CSE215', title: 'Electronic Devices', credit: 3, teacher: 'Mohammad Al Rasel' }
+                ]
+            }
+        };
+
+        let currentCourse = null;
+
+        function loadEvaluationData() {
+            const semester = document.getElementById('semesterSelect').value;
+            const courses = studentData.courses[semester] || [];
+            
+            if (courses.length === 0) {
+                document.getElementById('tableBody').innerHTML = '<tr><td colspan="5" style="text-align:center">No courses found for this semester</td></tr>';
+                return;
+            }
+
+            let html = '';
+            courses.forEach(course => {
+                const isSubmitted = teachingEval[course.code];
+                html += `
+                    <tr>
+                        <td>${isSubmitted ? '<span class="status-submitted">✅ Submitted</span>' : '<span class="status-pending">⏳ Pending</span>'}</td>
+                        <td>${course.code}</td>
+                        <td>${course.title}</td>
+                        <td>${course.teacher}</td>
+                        <td><button class="eval-btn" onclick="openEvaluationModal('${course.code}')" ${isSubmitted ? 'disabled style="opacity:0.5"' : ''}>📝 Evaluate</button></td>
+                    </tr>
+                `;
+            });
+            document.getElementById('tableBody').innerHTML = html;
+        }
+
+        function openEvaluationModal(courseCode) {
+            currentCourse = courseCode;
+            const course = findCourse(courseCode);
+            
+            const questionsHtml = `
+                <div class="question-card">
+                    <p>📌 <strong>1. Teaching Quality & Methodology:</strong></p>
+                    <div>
+                        <label class="rating-option"><input type="radio" name="q1" value="5"> ⭐⭐⭐⭐⭐ (Excellent)</label>
+                        <label class="rating-option"><input type="radio" name="q1" value="4"> ⭐⭐⭐⭐ (Good)</label>
+                        <label class="rating-option"><input type="radio" name="q1" value="3"> ⭐⭐⭐ (Average)</label>
+                        <label class="rating-option"><input type="radio" name="q1" value="2"> ⭐⭐ (Poor)</label>
+                        <label class="rating-option"><input type="radio" name="q1" value="1"> ⭐ (Very Poor)</label>
+                    </div>
+                </div>
+                <div class="question-card">
+                    <p>📌 <strong>2. Course Content & Material Quality:</strong></p>
+                    <div>
+                        <label class="rating-option"><input type="radio" name="q2" value="5"> Excellent</label>
+                        <label class="rating-option"><input type="radio" name="q2" value="4"> Good</label>
+                        <label class="rating-option"><input type="radio" name="q2" value="3"> Average</label>
+                        <label class="rating-option"><input type="radio" name="q2" value="2"> Poor</label>
+                        <label class="rating-option"><input type="radio" name="q2" value="1"> Very Poor</label>
+                    </div>
+                </div>
+                <div class="question-card">
+                    <p>📌 <strong>3. Communication & Student Interaction:</strong></p>
+                    <div>
+                        <label class="rating-option"><input type="radio" name="q3" value="5"> Excellent</label>
+                        <label class="rating-option"><input type="radio" name="q3" value="4"> Good</label>
+                        <label class="rating-option"><input type="radio" name="q3" value="3"> Average</label>
+                        <label class="rating-option"><input type="radio" name="q3" value="2"> Poor</label>
+                        <label class="rating-option"><input type="radio" name="q3" value="1"> Very Poor</label>
+                    </div>
+                </div>
+                <div class="question-card">
+                    <p>📌 <strong>4. Punctuality, Discipline & Class Management:</strong></p>
+                    <div>
+                        <label class="rating-option"><input type="radio" name="q4" value="5"> Excellent</label>
+                        <label class="rating-option"><input type="radio" name="q4" value="4"> Good</label>
+                        <label class="rating-option"><input type="radio" name="q4" value="3"> Average</label>
+                        <label class="rating-option"><input type="radio" name="q4" value="2"> Poor</label>
+                        <label class="rating-option"><input type="radio" name="q4" value="1"> Very Poor</label>
+                    </div>
+                </div>
+                <div class="question-card">
+                    <p>📌 <strong>5. Overall Satisfaction & Recommendation:</strong></p>
+                    <div>
+                        <label class="rating-option"><input type="radio" name="q5" value="5"> ⭐⭐⭐⭐⭐ (Highly Recommended)</label>
+                        <label class="rating-option"><input type="radio" name="q5" value="4"> ⭐⭐⭐⭐ (Recommended)</label>
+                        <label class="rating-option"><input type="radio" name="q5" value="3"> ⭐⭐⭐ (Neutral)</label>
+                        <label class="rating-option"><input type="radio" name="q5" value="2"> ⭐⭐ (Not Recommended)</label>
+                        <label class="rating-option"><input type="radio" name="q5" value="1"> ⭐ (Terrible)</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>💬 Additional Comments / Feedback:</label>
+                    <textarea id="evalComment" rows="4" placeholder="Share your valuable feedback about the course and teacher..."></textarea>
+                </div>
+                <button class="submit-btn" onclick="submitEvaluation()">✅ Submit Evaluation</button>
+            `;
+            document.getElementById('evalQuestions').innerHTML = questionsHtml;
+            document.getElementById('evalModal').style.display = 'flex';
+        }
+
+        function findCourse(courseCode) {
+            for (let semester in studentData.courses) {
+                const found = studentData.courses[semester].find(c => c.code === courseCode);
+                if (found) return found;
+            }
+            return null;
+        }
+
+        function submitEvaluation() {
+            const q1 = document.querySelector('input[name="q1"]:checked')?.value;
+            const q2 = document.querySelector('input[name="q2"]:checked')?.value;
+            const q3 = document.querySelector('input[name="q3"]:checked')?.value;
+            const q4 = document.querySelector('input[name="q4"]:checked')?.value;
+            const q5 = document.querySelector('input[name="q5"]:checked')?.value;
+            const comment = document.getElementById('evalComment')?.value;
+
+            if (!q1 || !q2 || !q3 || !q4 || !q5) {
+                alert('⚠️ Please answer all questions before submitting!');
+                return;
+            }
+
+            teachingEval[currentCourse] = true;
+            localStorage.setItem('teaching_eval_shovon', JSON.stringify(teachingEval));
+
+            const totalScore = (parseInt(q1) + parseInt(q2) + parseInt(q3) + parseInt(q4) + parseInt(q5)) / 5;
+            let rating = '';
+            if (totalScore >= 4.5) rating = 'Excellent ⭐⭐⭐⭐⭐';
+            else if (totalScore >= 3.5) rating = 'Good ⭐⭐⭐⭐';
+            else if (totalScore >= 2.5) rating = 'Average ⭐⭐⭐';
+            else rating = 'Needs Improvement ⭐⭐';
+
+            alert(`✅ Evaluation Submitted Successfully!\n\nCourse: ${currentCourse}\nOverall Rating: ${rating}\n\nThank you for your valuable feedback!`);
+            
+            closeModal();
+            loadEvaluationData();
+        }
+
+        function closeModal() {
+            document.getElementById('evalModal').style.display = 'none';
+            currentCourse = null;
+        }
+
+        // Load initial data
+        loadEvaluationData();
+    </script>
+</body>
+</html>

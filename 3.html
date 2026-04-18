@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Result - DIU Student Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: white;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            display: inline-block;
+        }
+
+        .semester-selector {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .semester-selector label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .semester-selector select {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95em;
+            background: white;
+            cursor: pointer;
+            min-width: 200px;
+        }
+
+        .semester-selector select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-search {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+
+        .data-table {
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            overflow-x: auto;
+            display: block;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        .data-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .view-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .view-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 3px 10px rgba(102,126,234,0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 25px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 25px 25px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.3em;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .marks-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .marks-card h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .marks-row {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .marks-label {
+            width: 45%;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .marks-value {
+            width: 55%;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .improvement-badge {
+            display: inline-block;
+            background: #4caf50;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 15px;
+            font-size: 0.7em;
+            margin-left: 8px;
+        }
+
+        .grade-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .grade-Aplus { background: #4caf50; color: white; }
+        .grade-A { background: #2196f3; color: white; }
+        .grade-Aminus { background: #ff9800; color: white; }
+        .grade-Bplus { background: #9c27b0; color: white; }
+        .grade-B { background: #607d8b; color: white; }
+        .grade-C { background: #f44336; color: white; }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85em;
+        }
+
+        @media (max-width: 768px) {
+            .header { flex-direction: column; text-align: center; gap: 15px; }
+            .semester-selector { flex-direction: column; align-items: stretch; }
+            .data-table th, .data-table td { padding: 8px 10px; font-size: 0.8em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Live Result | Shovon Server</h1>
+            <div class="user-info">
+                <span>Welcome, <strong>Shovon Chandra Das Niloy</strong></span>
+                <div class="avatar">S</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📊 Course-wise Live Result</h2>
+            
+            <div class="semester-selector">
+                <label>📅 Select Semester:</label>
+                <select id="semesterSelect" onchange="loadLiveResult()">
+                    <option value="Spring 2026">Spring 2026, 261</option>
+                    <option value="Fall 2025">Fall 2025, 253</option>
+                </select>
+                <button class="btn-search" onclick="loadLiveResult()">🔍 Search</button>
+            </div>
+
+            <div id="resultTable">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>SL</th>
+                            <th>Course Code</th>
+                            <th>Course Title</th>
+                            <th>Credit</th>
+                            <th>Section</th>
+                            <th>Teacher</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr><td colspan="7" style="text-align:center">Loading...</td</tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2026 - Developed by Shovon Server | Daffodil International University</p>
+        </div>
+    </div>
+
+    <div id="marksModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📊 Course Marks Details</h3>
+                <button class="close-modal" onclick="closeMarksModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="marksDetails"></div>
+        </div>
+    </div>
+
+    <script>
+        // DIU CGPA Calculation Function based on total marks
+        function calculateGradeAndPoint(totalMarks, isLab = false) {
+            if (isLab) {
+                if (totalMarks >= 80) return { grade: 'A+', point: 4.00 };
+                if (totalMarks >= 75) return { grade: 'A', point: 3.75 };
+                if (totalMarks >= 70) return { grade: 'A-', point: 3.50 };
+                if (totalMarks >= 65) return { grade: 'B+', point: 3.25 };
+                if (totalMarks >= 60) return { grade: 'B', point: 3.00 };
+                if (totalMarks >= 55) return { grade: 'B-', point: 2.75 };
+                if (totalMarks >= 50) return { grade: 'C+', point: 2.50 };
+                if (totalMarks >= 45) return { grade: 'C', point: 2.25 };
+                if (totalMarks >= 40) return { grade: 'D', point: 2.00 };
+                return { grade: 'F', point: 0.00 };
+            } else {
+                if (totalMarks >= 80) return { grade: 'A+', point: 4.00 };
+                if (totalMarks >= 75) return { grade: 'A', point: 3.75 };
+                if (totalMarks >= 70) return { grade: 'A-', point: 3.50 };
+                if (totalMarks >= 65) return { grade: 'B+', point: 3.25 };
+                if (totalMarks >= 60) return { grade: 'B', point: 3.00 };
+                if (totalMarks >= 55) return { grade: 'B-', point: 2.75 };
+                if (totalMarks >= 50) return { grade: 'C+', point: 2.50 };
+                if (totalMarks >= 45) return { grade: 'C', point: 2.25 };
+                if (totalMarks >= 40) return { grade: 'D', point: 2.00 };
+                return { grade: 'F', point: 0.00 };
+            }
+        }
+
+        // Function to calculate quiz average from 3 quizzes
+        function calculateQuizAverage(q1, q2, q3) {
+            return (q1 + q2 + q3) / 3;
+        }
+
+        // Calculate attendance percentage to marks (7 marks for theory)
+        function calculateAttendanceMarks(attendancePercent) {
+            return (attendancePercent / 100) * 7;
+        }
+
+        // Calculate attendance marks for lab (10 marks)
+        function calculateLabAttendanceMarks(attendancePercent) {
+            return (attendancePercent / 100) * 10;
+        }
+
+        // Calculate Midterm with improvement
+        // Rule: If improvement taken, better of original midterm and improvement marks is considered
+        function calculateMidtermMarks(originalMidterm, improvementMarks, hasImprovement) {
+            if (hasImprovement && improvementMarks > originalMidterm) {
+                return improvementMarks;
+            }
+            return originalMidterm;
+        }
+
+        // Student Data with proper marks including Midterm Improvement
+        const studentData = {
+            name: 'Shovon Chandra Das Niloy',
+            id: '0242420005104192',
+            courses: {
+                'Spring 2026': [
+                    { 
+                        code: 'CSE228', title: 'Theory of Computation', type: 'Theory', credit: 3, teacher: 'Rowzatu Zannat',
+                        hasMidtermImprovement: true,
+                        marks: { 
+                            attendancePercent: 94,
+                            quiz1: 14, quiz2: 13, quiz3: 12,
+                            assignment: 4.5,
+                            presentation: 7.2,
+                            midterm: 22,
+                            midtermImprovement: 24,  // Improved score
+                            final: 35
+                        }
+                    },
+                    { 
+                        code: 'CSE227', title: 'Systems Analysis and Design', type: 'Theory', credit: 3, teacher: 'Most. Hasna Hena',
+                        hasMidtermImprovement: false,
+                        marks: { 
+                            attendancePercent: 90,
+                            quiz1: 13, quiz2: 12, quiz3: 11,
+                            assignment: 4.2,
+                            presentation: 6.8,
+                            midterm: 20,
+                            midtermImprovement: 0,
+                            final: 33
+                        }
+                    },
+                    { 
+                        code: 'CSE225', title: 'Data Communication', type: 'Theory', credit: 3, teacher: 'Zakia Sultana Zakia',
+                        hasMidtermImprovement: true,
+                        marks: { 
+                            attendancePercent: 92,
+                            quiz1: 15, quiz2: 14, quiz3: 13,
+                            assignment: 4.8,
+                            presentation: 7.5,
+                            midterm: 23,
+                            midtermImprovement: 25,  // Improved score (full marks)
+                            final: 36
+                        }
+                    },
+                    { 
+                        code: 'CSE224', title: 'Digital Logic Design Lab', type: 'Lab', credit: 1.5, teacher: 'Engr. Golam Rabbany',
+                        hasMidtermImprovement: false,
+                        marks: { 
+                            attendancePercent: 95,
+                            labReport: 23,
+                            labPerformance: 24,
+                            project: 38
+                        }
+                    },
+                    { 
+                        code: 'CSE223', title: 'Digital Logic Design', type: 'Theory', credit: 3, teacher: 'Engr. Golam Rabbany',
+                        hasMidtermImprovement: false,
+                        marks: { 
+                            attendancePercent: 88,
+                            quiz1: 12, quiz2: 11, quiz3: 10,
+                            assignment: 3.8,
+                            presentation: 6.5,
+                            midterm: 18,
+                            midtermImprovement: 0,
+                            final: 30
+                        }
+                    }
+                ],
+                'Fall 2025': [
+                    { 
+                        code: 'CSE221', title: 'Object Oriented Programming', type: 'Theory', credit: 3, teacher: 'Hasnur Jahan',
+                        hasMidtermImprovement: false,
+                        marks: { 
+                            attendancePercent: 92,
+                            quiz1: 14, quiz2: 13, quiz3: 12,
+                            assignment: 4.5,
+                            presentation: 7.0,
+                            midterm: 22,
+                            midtermImprovement: 0,
+                            final: 34
+                        }
+                    },
+                    { 
+                        code: 'CSE222', title: 'OOP Lab', type: 'Lab', credit: 1.5, teacher: 'Hasnur Jahan',
+                        hasMidtermImprovement: false,
+                        marks: { 
+                            attendancePercent: 94,
+                            labReport: 24,
+                            labPerformance: 23,
+                            project: 39
+                        }
+                    }
+                ]
+            }
+        };
+
+        function loadLiveResult() {
+            const semester = document.getElementById('semesterSelect').value;
+            const courses = studentData.courses[semester] || [];
+            
+            if (courses.length === 0) {
+                document.getElementById('tableBody').innerHTML = '<tr><td colspan="7" style="text-align:center">No courses found for this semester</td</tr>';
+                return;
+            }
+
+            let html = '';
+            courses.forEach((course, index) => {
+                // Calculate total marks based on course type
+                let totalMarks = 0;
+                if (course.type === 'Theory') {
+                    const m = course.marks;
+                    const quizAvg = calculateQuizAverage(m.quiz1, m.quiz2, m.quiz3);
+                    const attendanceMarks = calculateAttendanceMarks(m.attendancePercent);
+                    const midtermMarks = calculateMidtermMarks(m.midterm, m.midtermImprovement, course.hasMidtermImprovement);
+                    totalMarks = attendanceMarks + quizAvg + m.assignment + m.presentation + midtermMarks + m.final;
+                    totalMarks = Math.round(totalMarks * 10) / 10;
+                } else {
+                    const m = course.marks;
+                    const attendanceMarks = calculateLabAttendanceMarks(m.attendancePercent);
+                    totalMarks = attendanceMarks + m.labReport + m.labPerformance + m.project;
+                    totalMarks = Math.round(totalMarks * 10) / 10;
+                }
+                
+                const gradeInfo = calculateGradeAndPoint(totalMarks, course.type === 'Lab');
+                course.calculatedTotal = totalMarks;
+                course.calculatedGrade = gradeInfo.grade;
+                course.calculatedPoint = gradeInfo.point;
+                
+                const improvementBadge = (course.type === 'Theory' && course.hasMidtermImprovement) ? 
+                    '<span class="improvement-badge">Mid Improved</span>' : '';
+                
+                html += `
+                    <tr>
+                        <td><button class="view-btn" onclick="showMarksModal('${course.code}')">📖 View Result</button>${improvementBadge}</td>
+                        <td>${index + 1}</td>
+                        <td>${course.code}</td>
+                        <td>${course.title}</td>
+                        <td>${course.credit}</td>
+                        <td>67_M</td>
+                        <td>${course.teacher}</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('tableBody').innerHTML = html;
+        }
+
+        function showMarksModal(courseCode) {
+            const semester = document.getElementById('semesterSelect').value;
+            const course = studentData.courses[semester]?.find(c => c.code === courseCode);
+            if (!course) return;
+
+            let totalMarks = course.calculatedTotal;
+            const gradeInfo = calculateGradeAndPoint(totalMarks, course.type === 'Lab');
+            
+            let marksHtml = `
+                <div class="marks-card">
+                    <h4>📚 ${course.code} - ${course.title}</h4>
+                    <p style="margin-bottom: 10px; color: #666;">Course Type: ${course.type} | Credit: ${course.credit} | Teacher: ${course.teacher}</p>
+            `;
+            
+            if (course.type === 'Theory') {
+                const m = course.marks;
+                const quizAvg = calculateQuizAverage(m.quiz1, m.quiz2, m.quiz3);
+                const attendanceMarks = calculateAttendanceMarks(m.attendancePercent);
+                const originalMidterm = m.midterm;
+                const midtermMarks = calculateMidtermMarks(m.midterm, m.midtermImprovement, course.hasMidtermImprovement);
+                
+                marksHtml += `
+                    <div class="marks-row"><div class="marks-label">📋 Attendance (${m.attendancePercent}%):</div><div class="marks-value">${attendanceMarks.toFixed(1)} / 7</div></div>
+                    <div class="marks-row"><div class="marks-label">📝 Quiz 1:</div><div class="marks-value">${m.quiz1} / 15</div></div>
+                    <div class="marks-row"><div class="marks-label">📝 Quiz 2:</div><div class="marks-value">${m.quiz2} / 15</div></div>
+                    <div class="marks-row"><div class="marks-label">📝 Quiz 3:</div><div class="marks-value">${m.quiz3} / 15</div></div>
+                    <div class="marks-row"><div class="marks-label">📊 Quiz Average:</div><div class="marks-value">${quizAvg.toFixed(1)} / 15</div></div>
+                    <div class="marks-row"><div class="marks-label">📄 Assignment:</div><div class="marks-value">${m.assignment} / 5</div></div>
+                    <div class="marks-row"><div class="marks-label">🎤 Presentation:</div><div class="marks-value">${m.presentation} / 8</div></div>
+                `;
+                
+                // Show Midterm with improvement info
+                if (course.hasMidtermImprovement && m.midtermImprovement > 0) {
+                    marksHtml += `
+                        <div class="marks-row" style="background: #fff3e0;">
+                            <div class="marks-label">✏️ Midterm (Original):</div>
+                            <div class="marks-value">${originalMidterm} / 25</div>
+                        </div>
+                        <div class="marks-row" style="background: #e8f5e9;">
+                            <div class="marks-label">📈 Midterm Improvement:</div>
+                            <div class="marks-value">${m.midtermImprovement} / 25 <span style="color:green">(Better score taken)</span></div>
+                        </div>
+                        <div class="marks-row"><div class="marks-label">✏️ Midterm (Final):</div><div class="marks-value"><strong>${midtermMarks} / 25</strong></div></div>
+                    `;
+                } else {
+                    marksHtml += `
+                        <div class="marks-row"><div class="marks-label">✏️ Midterm:</div><div class="marks-value">${m.midterm} / 25</div></div>
+                    `;
+                }
+                
+                marksHtml += `
+                    <div class="marks-row"><div class="marks-label">📖 Final Exam:</div><div class="marks-value">${m.final} / 40</div></div>
+                `;
+            } else {
+                const m = course.marks;
+                const attendanceMarks = calculateLabAttendanceMarks(m.attendancePercent);
+                
+                marksHtml += `
+                    <div class="marks-row"><div class="marks-label">📋 Attendance (${m.attendancePercent}%):</div><div class="marks-value">${attendanceMarks.toFixed(1)} / 10</div></div>
+                    <div class="marks-row"><div class="marks-label">📄 Lab Report:</div><div class="marks-value">${m.labReport} / 25</div></div>
+                    <div class="marks-row"><div class="marks-label">⚡ Lab Performance:</div><div class="marks-value">${m.labPerformance} / 25</div></div>
+                    <div class="marks-row"><div class="marks-label">💻 Project:</div><div class="marks-value">${m.project} / 40</div></div>
+                `;
+            }
+            
+            marksHtml += `
+                    <div class="marks-row" style="background: #e8f5e9; margin-top: 10px; border-radius: 8px;">
+                        <div class="marks-label"><strong>🏆 Total Marks:</strong></div>
+                        <div class="marks-value"><strong>${totalMarks.toFixed(1)} / 100</strong></div>
+                    </div>
+                    <div class="marks-row" style="background: #e3f2fd; border-radius: 8px;">
+                        <div class="marks-label"><strong>🎓 Grade:</strong></div>
+                        <div class="marks-value"><strong>${gradeInfo.grade}</strong></div>
+                    </div>
+                    <div class="marks-row" style="background: #e3f2fd; border-radius: 8px;">
+                        <div class="marks-label"><strong>📊 Grade Point:</strong></div>
+                        <div class="marks-value"><strong>${gradeInfo.point.toFixed(2)} out of 4.00</strong></div>
+                    </div>
+                </div>
+                
+                <div class="marks-card">
+                    <h4>📈 DIU Grading System (UGC Standard)</h4>
+                    <div class="marks-row"><div class="marks-label">80-100%</div><div class="marks-value">A+ (4.00) - Outstanding</div></div>
+                    <div class="marks-row"><div class="marks-label">75-79%</div><div class="marks-value">A (3.75) - Excellent</div></div>
+                    <div class="marks-row"><div class="marks-label">70-74%</div><div class="marks-value">A- (3.50) - Very Good</div></div>
+                    <div class="marks-row"><div class="marks-label">65-69%</div><div class="marks-value">B+ (3.25) - Good</div></div>
+                    <div class="marks-row"><div class="marks-label">60-64%</div><div class="marks-value">B (3.00) - Satisfactory</div></div>
+                    <div class="marks-row"><div class="marks-label">55-59%</div><div class="marks-value">B- (2.75) - Above Average</div></div>
+                    <div class="marks-row"><div class="marks-label">50-54%</div><div class="marks-value">C+ (2.50) - Average</div></div>
+                    <div class="marks-row"><div class="marks-label">45-49%</div><div class="marks-value">C (2.25) - Below Average</div></div>
+                    <div class="marks-row"><div class="marks-label">40-44%</div><div class="marks-value">D (2.00) - Pass</div></div>
+                    <div class="marks-row"><div class="marks-label">Below 40%</div><div class="marks-value">F (0.00) - Fail</div></div>
+                    <div class="marks-row" style="background: #fff3e0; margin-top: 10px;">
+                        <div class="marks-label">📌 Midterm Improvement:</div>
+                        <div class="marks-value">If improvement taken, better of original and improvement marks is considered</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('marksDetails').innerHTML = marksHtml;
+            document.getElementById('marksModal').style.display = 'flex';
+        }
+
+        function closeMarksModal() {
+            document.getElementById('marksModal').style.display = 'none';
+        }
+
+        loadLiveResult();
+    </script>
+</body>
+</html>

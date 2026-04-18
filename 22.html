@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shovon Server - DIU Complete Student Portal</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+        }
+
+        .welcome-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-container::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1%, transparent 1%);
+            background-size: 50px 50px;
+            animation: moveDots 20s linear infinite;
+        }
+
+        @keyframes moveDots {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .welcome-card {
+            background: rgba(255,255,255,0.95);
+            padding: 60px 80px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.8s ease;
+            z-index: 1;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .welcome-card h1 {
+            font-size: 3em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .welcome-card p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .enter-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(102,126,234,0.4);
+        }
+
+        .enter-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(102,126,234,0.6);
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .selection-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .selection-card h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .role-option, .radio-group label {
+            padding: 15px 30px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .role-option:hover, .radio-group label:hover {
+            background: #e0e0ff;
+            transform: translateY(-3px);
+        }
+
+        .role-option.selected {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .continue-btn, .next-btn, .login-btn, .register-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        .forgot-password {
+            color: #667eea;
+            cursor: pointer;
+            text-decoration: underline;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            background: #f5f7fb;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 5px 0 30px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding: 25px;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .category {
+            margin: 15px 0;
+        }
+
+        .category-title {
+            padding: 10px 25px;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            color: #667eea;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            padding: 10px 20px;
+            margin: 3px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+
+        .sidebar-menu li:hover {
+            background: rgba(102,126,234,0.2);
+            transform: translateX(5px);
+        }
+
+        .submenu {
+            list-style: none;
+            margin-left: 45px;
+            display: none;
+        }
+
+        .submenu.show {
+            display: block;
+        }
+
+        .submenu li {
+            padding: 8px 15px;
+            margin: 3px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            font-size: 0.85em;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 25px;
+            width: 100%;
+        }
+
+        .header {
+            background: white;
+            padding: 18px 25px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .header h1 {
+            font-size: 1.5em;
+            color: #333;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .data-table {
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            overflow-x: auto;
+            display: block;
+            font-size: 0.85em;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .data-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .payment-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .payment-card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-left: 3px solid;
+        }
+
+        .payment-card.payable { border-left-color: #ff9800; }
+        .payment-card.paid { border-left-color: #4caf50; }
+        .payment-card.due { border-left-color: #f44336; }
+
+        .payment-card h4 { color: #666; font-size: 0.8em; }
+        .payment-card .amount { font-size: 1.3em; font-weight: bold; color: #333; }
+
+        .service-card, .credit-section, .routine-card, .chart-container, .waiver-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .semester-selector {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .semester-selector select, .semester-selector input {
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            flex: 1;
+        }
+
+        .btn-primary, .order-btn, .add-btn, .edit-btn, .view-btn, .save-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+
+        .waiver-percent {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4caf50;
+        }
+
+        .routine-day-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .routine-time {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 8px;
+            display: inline-block;
+            font-size: 0.8em;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .profile-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .profile-nav-item {
+            padding: 8px 15px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s;
+        }
+
+        .profile-nav-item:hover, .profile-nav-item.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .info-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .info-row {
+            display: flex;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.85em;
+            flex-wrap: wrap;
+        }
+
+        .info-label {
+            width: 35%;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .info-value {
+            width: 55%;
+            color: #333;
+        }
+
+        .edit-field {
+            display: none;
+            margin-top: 5px;
+            width: 100%;
+        }
+
+        .edit-field input, .edit-field select {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .food-item {
+            background: #f8f9fa;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .wallet-balance {
+            font-size: 2em;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+        }
+
+        .rating-option {
+            display: inline-block;
+            margin-right: 15px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .meeting-table {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .meeting-table h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 250px; }
+            .main-content { margin-left: 250px; padding: 15px; }
+            .welcome-card { padding: 30px 20px; }
+            .info-label { width: 100%; margin-bottom: 5px; }
+            .info-value { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Page -->
+    <div id="welcomePage" class="welcome-container">
+        <div class="welcome-card">
+            <h1>🎓 Welcome to Shovon Server</h1>
+            <p>DIU Complete Student Portal</p>
+            <button class="enter-btn" onclick="goToUniversity()">Enter Campus →</button>
+        </div>
+    </div>
+
+    <!-- University Selection -->
+    <div id="universityPage" style="display:none">
+        <div class="container">
+            <div class="selection-card">
+                <h2>🏛️ Select Your University</h2>
+                <div class="radio-group">
+                    <label><input type="radio" name="university" value="diu" checked hidden> 🏫 Daffodil International University</label>
+                    <label><input type="radio" name="university" value="other" hidden> 🌍 Other University</label>
+                </div>
+                <div style="text-align:center">
+                    <button class="continue-btn" onclick="goToRoleSelect()">Continue →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Role Selection -->
+    <div id="roleSelectPage" style="display:none">
+        <div class="container">
+            <div class="selection-card">
+                <h2>👥 Select Your Role</h2>
+                <div class="radio-group">
+                    <div class="role-option" data-role="student" onclick="selectRole('student')">👨‍🎓 Student</div>
+                    <div class="role-option" data-role="teacher" onclick="selectRole('teacher')">👩‍🏫 Teacher</div>
+                    <div class="role-option" data-role="admin" onclick="selectRole('admin')">👑 Admin</div>
+                </div>
+                <input type="hidden" id="selectedRole">
+                <div style="text-align:center">
+                    <button class="continue-btn" onclick="goToLoginRegister()">Continue →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login/Register Choice -->
+    <div id="loginRegisterPage" style="display:none">
+        <div class="container">
+            <div class="selection-card">
+                <h2 id="lrTitle">Access Portal</h2>
+                <div style="display:flex; gap:15px; justify-content:center">
+                    <button class="login-btn" onclick="showLogin()">Login</button>
+                    <button class="register-btn" onclick="showRegister()">Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="loginPage" style="display:none">
+        <div class="container">
+            <div class="selection-card">
+                <h2>🔐 Login to Shovon Server</h2>
+                <div class="form-group"><label>ID</label><input type="text" id="loginId" placeholder="Enter your ID"></div>
+                <div class="form-group"><label>Password</label><input type="password" id="loginPassword" placeholder="Password"></div>
+                <button class="login-btn" onclick="login()">Login</button>
+                <button class="register-btn" onclick="showRegister()">Register</button>
+                <div><span class="forgot-password" onclick="showForgot()">Forgot Password?</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Page -->
+    <div id="registerPage" style="display:none">
+        <div class="container">
+            <div class="selection-card">
+                <h2>📝 Register</h2>
+                <div class="form-group"><label>Full Name</label><input type="text" id="regName"></div>
+                <div class="form-group"><label>ID</label><input type="text" id="regId"></div>
+                <div class="form-group"><label>Email</label><input type="email" id="regEmail"></div>
+                <div class="form-group"><label>Password</label><input type="password" id="regPassword"></div>
+                <div class="form-group"><label>Role</label>
+                    <select id="regRole">
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button class="login-btn" onclick="register()">Sign Up</button>
+                <button class="register-btn" onclick="showLogin()">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password -->
+    <div id="forgotPage" style="display:none">
+        <div class="container">
+            <div class="selection-card">
+                <h2>🔑 Reset Password</h2>
+                <div class="form-group"><label>ID</label><input type="text" id="forgotId"></div>
+                <div class="form-group"><label>New Password</label><input type="password" id="newPass"></div>
+                <button class="login-btn" onclick="resetPassword()">Reset</button>
+                <button class="register-btn" onclick="showLogin()">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Dashboard -->
+    <div id="studentDashboard" style="display:none">
+        <div class="dashboard-container">
+            <div class="sidebar">
+                <div class="sidebar-header"><h2>🎓 Shovon Server</h2><p>Student Portal</p></div>
+                <div class="category"><div class="category-title">📊 MAIN</div>
+                    <ul class="sidebar-menu"><li onclick="showStudentSection('dashboard')">🏠 Dashboard</li></ul>
+                </div>
+                <div class="category"><div class="category-title">📚 ACADEMIC</div>
+                    <ul class="sidebar-menu">
+                        <li onclick="showStudentSection('profile')">👤 Student Profile</li>
+                        <li onclick="showStudentSection('payment')">💰 Payment Ledger</li>
+                        <li onclick="showStudentSection('waiver')">🎁 Waiver</li>
+                        <li onclick="showStudentSection('clearance')">📋 Registration/Exam Clearance</li>
+                        <li onclick="showStudentSection('courses')">📚 Registered Course</li>
+                        <li onclick="showStudentSection('result')">📊 Result & CGPA</li>
+                        <li onclick="showStudentSection('routine')">📅 Routine</li>
+                        <li onclick="showStudentSection('liveResult')">🎯 Live Result</li>
+                        <li onclick="showStudentSection('teachingEvaluation')">📝 Teaching Evaluation</li>
+                        <li onclick="showStudentSection('convocation')">🎓 Convocation Apply</li>
+                        <li onclick="showStudentSection('transport')">🚌 Transport Card Apply</li>
+                        <li onclick="showStudentSection('scholarship')">🏆 Scholarship</li>
+                        <li onclick="showStudentSection('certificate')">📜 Certificate & Transcript</li>
+                        <li onclick="showStudentSection('resources')">📖 Learning Resources</li>
+                    </ul>
+                </div>
+                <div class="category"><div class="category-title">🛠️ SERVICES</div>
+                    <ul class="sidebar-menu">
+                        <li onclick="showStudentSection('laptop')">💻 Laptop</li>
+                        <li onclick="showStudentSection('mentorMeeting')">👨‍🏫 Mentor Meeting</li>
+                        <li onclick="window.open('http://empapp.daffodilvarsity.edu.bd/diu-sac/dashboard','_blank')">📝 Student Application</li>
+                        <li onclick="window.open('https://studentshub.daffodilvarsity.edu.bd/','_blank')">🌐 Student Hub</li>
+                        <li onclick="window.open('https://skill.jobs/','_blank')">💼 Skill Jobs</li>
+                        <li onclick="window.open('https://jobutsob.daffodilvarsity.edu.bd/','_blank')">🎯 Job Utsob</li>
+                        <li onclick="window.open('https://dsc.creative-bd.com/','_blank')">🏢 Hall Management</li>
+                    </ul>
+                </div>
+                <div class="category"><div class="category-title">🏥 HEALTH</div>
+                    <ul class="sidebar-menu">
+                        <li onclick="toggleHealthMenu()">🏥 Health Related Service ▼</li>
+                        <ul id="healthSubmenu" class="submenu">
+                            <li onclick="showStudentSection('food')">🍽️ Nearest Food Hotel</li>
+                            <li onclick="showStudentSection('wallet')">👛 Wallet Option</li>
+                            <li onclick="showStudentSection('healthTips')">💊 Health Tips</li>
+                            <li onclick="showStudentSection('nearestMedical')">🏥 Nearest Medical</li>
+                        </ul>
+                    </ul>
+                </div>
+                <ul class="sidebar-menu"><li onclick="logout()">🚪 Logout</li></ul>
+            </div>
+            <div class="main-content">
+                <div class="header"><h1 id="studentPageTitle">Dashboard</h1>
+                    <div class="user-info"><span>Welcome, <strong id="studentName"></strong></span><div class="avatar" id="studentAvatar"></div></div>
+                </div>
+                <div class="content-card" id="studentContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Teacher Dashboard -->
+    <div id="teacherDashboard" style="display:none">
+        <div class="dashboard-container">
+            <div class="sidebar"><div class="sidebar-header"><h2>👩‍🏫 Teacher Portal</h2><p>Shovon Server</p></div>
+                <ul class="sidebar-menu">
+                    <li onclick="showTeacherSection('dashboard')">📊 Dashboard</li>
+                    <li onclick="showTeacherSection('profile')">👤 Profile</li>
+                    <li onclick="showTeacherSection('courses')">📚 My Courses</li>
+                    <li onclick="showTeacherSection('students')">👨‍🎓 Students</li>
+                    <li onclick="showTeacherSection('creditEntry')">🎓 Credit Entry</li>
+                    <li onclick="logout()">🚪 Logout</li>
+                </ul>
+            </div>
+            <div class="main-content"><div class="header"><h1>Teacher Panel</h1><div class="user-info"><span>Welcome, <strong id="teacherName"></strong></span></div></div><div class="content-card" id="teacherContent"></div></div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" style="display:none">
+        <div class="dashboard-container">
+            <div class="sidebar"><div class="sidebar-header"><h2>👑 Admin Portal</h2><p>Shovon Server</p></div>
+                <ul class="sidebar-menu">
+                    <li onclick="showAdminSection('dashboard')">📊 Dashboard</li>
+                    <li onclick="showAdminSection('users')">👥 Manage Users</li>
+                    <li onclick="showAdminSection('routine')">📅 Update Routine</li>
+                    <li onclick="logout()">🚪 Logout</li>
+                </ul>
+            </div>
+            <div class="main-content"><div class="header"><h1>Admin Panel</h1><div class="user-info"><span>Welcome, <strong id="adminName"></strong></span></div></div><div class="content-card" id="adminContent"></div></div>
+        </div>
+    </div>
+
+    <!-- Evaluation Modal -->
+    <div id="evalModal" class="modal">
+        <div class="modal-content">
+            <h3>📝 Teaching Evaluation - Course Evaluation</h3>
+            <div id="evalQuestions"></div>
+            <button class="btn-primary" onclick="submitEvaluation()">Submit Evaluation</button>
+            <button class="register-btn" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Marks Modal -->
+    <div id="marksModal" class="modal">
+        <div class="modal-content">
+            <h3>📊 Course Marks Details</h3>
+            <div id="marksDetails"></div>
+            <button class="register-btn" onclick="closeMarksModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let users = JSON.parse(localStorage.getItem('portal_users') || '{}');
+        let payments = JSON.parse(localStorage.getItem('payments') || '{}');
+        let studentResults = JSON.parse(localStorage.getItem('student_results') || '{}');
+        let studentFullInfo = JSON.parse(localStorage.getItem('student_full_info') || '{}');
+        let routineData = JSON.parse(localStorage.getItem('routine_data') || '{}');
+        let teachingEval = JSON.parse(localStorage.getItem('teaching_eval') || '{}');
+        let currentEvalCourse = null;
+
+        // Payment Ledger Data
+        const paymentLedgerData = [
+            { date: 'Sep 2, 2025', collectedBy: 'SSLCommrrz', description: 'Campus Development Fee', receivable: 0, paid: 4500 },
+            { date: 'Sep 2, 2025', collectedBy: 'SSLCommrrz', description: 'Extra Curriculum Fee', receivable: 0, paid: 1500 },
+            { date: 'Sep 2, 2025', collectedBy: 'SSLCommrrz', description: 'Lab Fee', receivable: 0, paid: 2667 },
+            { date: 'Sep 2, 2025', collectedBy: 'SSLCommrrz', description: 'Library Fee', receivable: 0, paid: 500 },
+            { date: 'Sep 2, 2025', collectedBy: 'SSLCommrrz', description: 'Semester Fee', receivable: 0, paid: 5500 },
+            { date: 'Sep 2, 2025', collectedBy: 'SSLCommrrz', description: 'Tuition Fee', receivable: 0, paid: 12333 },
+            { date: 'Sep 2, 2025', collectedBy: '', description: 'Tuition Fee', receivable: 69000, paid: 0 },
+            { date: 'Sep 2, 2025', collectedBy: '', description: 'Waiver', receivable: 0, paid: 17250 },
+            { date: 'Sep 7, 2025', collectedBy: 'SSLCommrrz', description: 'Tuition Fee', receivable: 0, paid: 100 },
+            { date: 'Sep 7, 2025', collectedBy: 'SSLCommrrz', description: 'Tuition Fee', receivable: 0, paid: 50 },
+            { date: 'Sep 8, 2025', collectedBy: 'SSLCommrrz', description: 'Tuition Fee', receivable: 0, paid: 50 },
+            { date: 'Sep 9, 2025', collectedBy: 'SSLCommrrz', description: 'Tuition Fee', receivable: 0, paid: 2000 },
+            { date: 'Sep 9, 2025', collectedBy: 'SSLCommrrz', description: 'Tuition Fee', receivable: 0, paid: 6000 },
+            { date: 'Oct 12, 2025', collectedBy: 'ASHULAA', description: 'Tuition Fee', receivable: 0, paid: 15000 },
+            { date: 'Nov 10, 2025', collectedBy: 'ASHULAA', description: 'Tuition Fee', receivable: 0, paid: 16200 },
+            { date: 'Dec 26, 2025', collectedBy: 'ASHULAA', description: 'Tuition Fee', receivable: 0, paid: 27800 }
+        ];
+
+        // Sample Data Initialization
+        if (Object.keys(studentFullInfo).length === 0) {
+            studentFullInfo['0242420005104192'] = {
+                personInfo: { name: 'Shovon Chandra Das Niloy', gender: 'Male', bloodGroup: 'O+', mobile: '01754338509', personalEmail: 'niloydastr@gmail.com', diuEmail: 'das242-15-492@diu.edu.bd', countryOfBirth: 'Bangladesh', nationalId: '4224228215', religion: 'Hinduism', maritalStatus: 'Single' },
+                academicInfo: { studentId: '0242420005104192', regId: '242-15-492', batch: '67', shift: 'MORNING', campus: 'DSC', program: 'B.Sc. in Computer Science & Engineering', department: 'Computer Science & Engineering', faculty: 'Faculty of Science & Information Technology' },
+                addressInfo: { present: 'Area-Lakshmipur, P.O-Hatirdia-1651, Thana-Monohordi, D-Narsingdi', permanent: 'Area-Lakshmipur, P.O-Hatirdia-1651, Thana-Monohordi, D-Narsingdi' },
+                localGuardian: { name: 'Shosanto Chandra Das', nid: '6460691659', mobile: '01701511860', email: 'shosantod@gmail.com', address: 'Area-Lakshmipur, P.O-Hatirdia-1651, Thana-Monohordi, D-Narsingdi' },
+                familyInfo: { father: { name: 'RIPON CHANDRA DAS', mobile: '01726568554', nid: '6812524300163', dob: 'Oct 5, 1977', occupation: 'Business', annualIncome: '500000' }, mother: { name: 'BOKUL RANI DAS', mobile: '01738367159', nid: '6812524300106', dob: 'Jul 15, 1982', occupation: 'Housewife' } },
+                educationInfo: { hsc: { institute: 'Narsingdi Science College', group: 'Science Group', regNo: '1710542978', year: '2022' }, ssc: { institute: 'Shahabuddin Memorial Academy', group: 'Science Group', regNo: '1710542978', year: '2020' } }
+            };
+            localStorage.setItem('student_full_info', JSON.stringify(studentFullInfo));
+        }
+
+        if (Object.keys(studentResults).length === 0) {
+            studentResults['0242420005104192'] = {
+                semesters: ['Fall 2024', 'Spring 2025', 'Summer 2025', 'Fall 2025', 'Spring 2026'],
+                sgpa: [3.15, 3.4, 3.9, 3.5, 3.42],
+                credits: [15, 15, 15, 15, 15],
+                courses: {
+                    'Fall 2024': [
+                        { code: 'CSE101', title: 'Programming Fundamentals', credit: 3, grade: 'B+', gradePoint: 3.25 },
+                        { code: 'CSE102', title: 'Computer Basics', credit: 3, grade: 'A-', gradePoint: 3.5 }
+                    ],
+                    'Spring 2025': [
+                        { code: 'CSE201', title: 'Data Structures', credit: 3, grade: 'A-', gradePoint: 3.5 },
+                        { code: 'CSE202', title: 'Algorithms', credit: 3, grade: 'B+', gradePoint: 3.25 }
+                    ],
+                    'Summer 2025': [
+                        { code: 'CSE215', title: 'Electronic Devices', credit: 3, grade: 'A', gradePoint: 3.75 },
+                        { code: 'CSE216', title: 'Electronics Lab', credit: 1.5, grade: 'A+', gradePoint: 4.0 }
+                    ],
+                    'Fall 2025': [
+                        { code: 'AOL101', title: 'Art of Living', credit: 3, grade: 'A', gradePoint: 3.75 },
+                        { code: 'CSE215', title: 'Electronic Devices and Circuits', credit: 3, grade: 'B+', gradePoint: 3.25 },
+                        { code: 'CSE221', title: 'Object Oriented Programming', credit: 3, grade: 'B+', gradePoint: 3.25 },
+                        { code: 'CSE216', title: 'Electronics Lab', credit: 1.5, grade: 'A+', gradePoint: 4.0 },
+                        { code: 'BNS101', title: 'Bangladesh Studies', credit: 3, grade: 'B+', gradePoint: 3.25 },
+                        { code: 'CSE222', title: 'OOP Lab', credit: 1.5, grade: 'A+', gradePoint: 4.0 }
+                    ],
+                    'Spring 2026': [
+                        { code: 'CSE228', title: 'Theory of Computation', credit: 3, grade: 'A-', gradePoint: 3.5, teacher: 'Rowzatu Zannat', marks: { attendance: 94, quiz: 15, mid: 78, final: 82, assignment: 85, presentation: 80 } },
+                        { code: 'CSE227', title: 'Systems Analysis and Design', credit: 3, grade: 'B+', gradePoint: 3.25, teacher: 'Most. Hasna Hena', marks: { attendance: 90, quiz: 14, mid: 75, final: 80, assignment: 82, presentation: 78 } },
+                        { code: 'CSE225', title: 'Data Communication', credit: 3, grade: 'A-', gradePoint: 3.5, teacher: 'Zakia Sultana Zakia', marks: { attendance: 92, quiz: 16, mid: 80, final: 85, assignment: 88, presentation: 82 } },
+                        { code: 'CSE224', title: 'Digital Logic Design Lab', credit: 1.5, grade: 'A', gradePoint: 3.75, teacher: 'Engr. Golam Rabbany', marks: { attendance: 95, quiz: 18, mid: 85, final: 88, assignment: 90, presentation: 85 } },
+                        { code: 'CSE223', title: 'Digital Logic Design', credit: 3, grade: 'B+', gradePoint: 3.25, teacher: 'Engr. Golam Rabbany', marks: { attendance: 88, quiz: 13, mid: 72, final: 78, assignment: 80, presentation: 75 } }
+                    ]
+                }
+            };
+            localStorage.setItem('student_results', JSON.stringify(studentResults));
+        }
+
+        if (Object.keys(routineData).length === 0) {
+            routineData = {
+                'Monday': '<tr><td>08:30 - 10:00</td><td>Theory of Computation (CSE228)</td><td>KT-318(B)</td></tr><tr><td>10:00 - 11:30</td><td>Systems Analysis and Design (CSE227)</td><td>KT-019</td></tr>',
+                'Tuesday': '<tr><td>08:30 - 10:00</td><td>Theory of Computation (CSE228)</td><td>KT-310(B)</td></tr>',
+                'Wednesday': '<tr><td>08:30 - 10:00</td><td>Digital Logic Design (CSE223)</td><td>KT-518</td></tr><tr><td>10:00 - 11:30</td><td>Digital Logic Design Lab (CSE224)</td><td>KT-510</td></tr>',
+                'Thursday': '<tr><td colspan="3">No classes on Thursday</td></tr>',
+                'Friday': '<tr><td colspan="3">No classes on Friday</td></tr>',
+                'Saturday': '<tr><td colspan="3">No classes on Saturday</td></tr>',
+                'Sunday': '<tr><td>08:30 - 10:00</td><td>Theory of Computation (CSE228)</td><td>KT-019</td></tr><tr><td>10:00 - 11:30</td><td>Systems Analysis and Design (CSE227)</td><td>KT-019</td></tr>'
+            };
+            localStorage.setItem('routine_data', JSON.stringify(routineData));
+        }
+
+        if (!payments['0242420005104192']) {
+            payments['0242420005104192'] = { totalPayable: 466868, totalPaid: 435595, totalDue: 31273 };
+            localStorage.setItem('payments', JSON.stringify(payments));
+        }
+
+        if (Object.keys(users).length === 0) {
+            users['0242420005104192'] = { name: 'Shovon Chandra Das Niloy', email: 'das242-15-492@diu.edu.bd', password: '1234', role: 'student' };
+            users['teacher1'] = { name: 'Rowzatu Zannat', email: 'rowzatu@diu.edu.bd', password: '1234', role: 'teacher' };
+            users['admin1'] = { name: 'Admin User', email: 'admin@diu.edu.bd', password: '1234', role: 'admin' };
+            localStorage.setItem('portal_users', JSON.stringify(users));
+        }
+
+        function selectRole(role) {
+            document.querySelectorAll('.role-option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelector(`[data-role="${role}"]`).classList.add('selected');
+            document.getElementById('selectedRole').value = role;
+        }
+
+        function goToUniversity() {
+            document.getElementById('welcomePage').style.display = 'none';
+            document.getElementById('universityPage').style.display = 'block';
+        }
+
+        function goToRoleSelect() {
+            let uni = document.querySelector('input[name="university"]:checked')?.parentElement?.innerText.includes('Daffodil') ? 'diu' : 'other';
+            if (uni === 'other') { alert('Other University coming soon!'); return; }
+            document.getElementById('universityPage').style.display = 'none';
+            document.getElementById('roleSelectPage').style.display = 'block';
+        }
+
+        function goToLoginRegister() {
+            let role = document.getElementById('selectedRole').value;
+            if (!role) { alert('Select a role!'); return; }
+            currentRole = role;
+            document.getElementById('lrTitle').innerHTML = role === 'student' ? '👨‍🎓 Student Access' : (role === 'teacher' ? '👩‍🏫 Teacher Access' : '👑 Admin Access');
+            document.getElementById('roleSelectPage').style.display = 'none';
+            document.getElementById('loginRegisterPage').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.getElementById('loginRegisterPage').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'block';
+        }
+
+        function showRegister() {
+            document.getElementById('loginRegisterPage').style.display = 'none';
+            document.getElementById('registerPage').style.display = 'block';
+        }
+
+        function showForgot() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('forgotPage').style.display = 'block';
+        }
+
+        function register() {
+            let name = document.getElementById('regName').value;
+            let id = document.getElementById('regId').value;
+            let email = document.getElementById('regEmail').value;
+            let password = document.getElementById('regPassword').value;
+            let role = document.getElementById('regRole').value;
+            if (!name || !id || !email || !password) { alert('Fill all fields!'); return; }
+            if (users[id]) { alert('ID exists!'); return; }
+            users[id] = { name, email, password, role: role };
+            localStorage.setItem('portal_users', JSON.stringify(users));
+            if (role === 'student') {
+                if (!payments[id]) payments[id] = { totalPayable: 466868, totalPaid: 435595, totalDue: 31273 };
+                localStorage.setItem('payments', JSON.stringify(payments));
+                if (!studentFullInfo[id]) {
+                    studentFullInfo[id] = { personInfo: { name: name, diuEmail: email }, academicInfo: { studentId: id } };
+                    localStorage.setItem('student_full_info', JSON.stringify(studentFullInfo));
+                }
+            }
+            alert('Registration successful!');
+            showLogin();
+        }
+
+        function login() {
+            let id = document.getElementById('loginId').value;
+            let password = document.getElementById('loginPassword').value;
+            if (users[id] && users[id].password === password) {
+                currentUser = { id, name: users[id].name, role: users[id].role };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                document.getElementById('loginPage').style.display = 'none';
+                if (users[id].role === 'student') {
+                    document.getElementById('studentDashboard').style.display = 'block';
+                    document.getElementById('studentName').innerText = currentUser.name;
+                    document.getElementById('studentAvatar').innerText = currentUser.name.charAt(0).toUpperCase();
+                    showStudentSection('dashboard');
+                } else if (users[id].role === 'teacher') {
+                    document.getElementById('teacherDashboard').style.display = 'block';
+                    document.getElementById('teacherName').innerText = currentUser.name;
+                    showTeacherSection('dashboard');
+                } else {
+                    document.getElementById('adminDashboard').style.display = 'block';
+                    document.getElementById('adminName').innerText = currentUser.name;
+                    showAdminSection('dashboard');
+                }
+            } else { alert('Invalid credentials!'); }
+        }
+
+        function resetPassword() {
+            let id = document.getElementById('forgotId').value;
+            let newPass = document.getElementById('newPass').value;
+            if (users[id]) { users[id].password = newPass; localStorage.setItem('portal_users', JSON.stringify(users)); alert('Password reset!'); showLogin(); }
+            else { alert('ID not found!'); }
+        }
+
+        function toggleHealthMenu() {
+            document.getElementById('healthSubmenu').classList.toggle('show');
+        }
+
+        let currentProfileSection = 'personInfo';
+        
+        function showProfileSection(section) {
+            currentProfileSection = section;
+            renderProfileContent();
+        }
+        
+        function renderProfileContent() {
+            let info = studentFullInfo[currentUser?.id] || studentFullInfo['0242420005104192'];
+            let content = '';
+            
+            if (currentProfileSection === 'personInfo') {
+                let p = info.personInfo || {};
+                content = `<div class="info-card"><h3>📋 Person Information</h3>
+                    <div class="info-row"><div class="info-label">Name</div><div class="info-value"><span id="view_name">${p.name || ''}</span><div class="edit-field"><input type="text" id="edit_name" value="${p.name || ''}"></div></div><button class="edit-btn" onclick="editField('name')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">Gender</div><div class="info-value"><span id="view_gender">${p.gender || 'Male'}</span><div class="edit-field"><select id="edit_gender"><option>Male</option><option>Female</option></select></div></div><button class="edit-btn" onclick="editField('gender')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">Blood Group</div><div class="info-value"><span id="view_bloodGroup">${p.bloodGroup || 'O+'}</span><div class="edit-field"><input type="text" id="edit_bloodGroup" value="${p.bloodGroup || 'O+'}"></div></div><button class="edit-btn" onclick="editField('bloodGroup')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">Mobile Number</div><div class="info-value"><span id="view_mobile">${p.mobile || ''}</span><div class="edit-field"><input type="text" id="edit_mobile" value="${p.mobile || ''}"></div></div><button class="edit-btn" onclick="editField('mobile')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">Personal Email</div><div class="info-value"><span id="view_personalEmail">${p.personalEmail || ''}</span><div class="edit-field"><input type="email" id="edit_personalEmail" value="${p.personalEmail || ''}"></div></div><button class="edit-btn" onclick="editField('personalEmail')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">DIU Email</div><div class="info-value">${p.diuEmail || currentUser?.id+'@diu.edu.bd'}</div></div>
+                    <div class="info-row"><div class="info-label">NID</div><div class="info-value"><span id="view_nationalId">${p.nationalId || ''}</span><div class="edit-field"><input type="text" id="edit_nationalId" value="${p.nationalId || ''}"></div></div><button class="edit-btn" onclick="editField('nationalId')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">Religion</div><div class="info-value"><span id="view_religion">${p.religion || ''}</span><div class="edit-field"><input type="text" id="edit_religion" value="${p.religion || ''}"></div></div><button class="edit-btn" onclick="editField('religion')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">Marital Status</div><div class="info-value"><span id="view_maritalStatus">${p.maritalStatus || 'Single'}</span><div class="edit-field"><select id="edit_maritalStatus"><option>Single</option><option>Married</option></select></div></div><button class="edit-btn" onclick="editField('maritalStatus')">Edit</button></div>
+                    <button class="save-btn" onclick="savePersonInfo()">Save Changes</button>
+                </div>`;
+            }
+            else if (currentProfileSection === 'academicInfo') {
+                let a = info.academicInfo || {};
+                content = `<div class="info-card"><h3>📚 Academic Information</h3>
+                    <div class="info-row"><div class="info-label">Student ID</div><div class="info-value">${a.studentId || currentUser?.id}</div></div>
+                    <div class="info-row"><div class="info-label">Registration ID</div><div class="info-value">${a.regId || '242-15-492'}</div></div>
+                    <div class="info-row"><div class="info-label">Batch</div><div class="info-value">${a.batch || '67'}</div></div>
+                    <div class="info-row"><div class="info-label">Shift</div><div class="info-value">${a.shift || 'MORNING'}</div></div>
+                    <div class="info-row"><div class="info-label">Campus</div><div class="info-value">${a.campus || 'DSC'}</div></div>
+                    <div class="info-row"><div class="info-label">Program</div><div class="info-value">${a.program || 'B.Sc. in Computer Science & Engineering'}</div></div>
+                    <div class="info-row"><div class="info-label">Department</div><div class="info-value">${a.department || 'Computer Science & Engineering'}</div></div>
+                    <div class="info-row"><div class="info-label">Faculty</div><div class="info-value">${a.faculty || 'Faculty of Science & Information Technology'}</div></div>
+                </div>`;
+            }
+            else if (currentProfileSection === 'addressInfo') {
+                let addr = info.addressInfo || {};
+                content = `<div class="info-card"><h3>📍 Address Information</h3>
+                    <div class="info-row"><div class="info-label">Present Address</div><div class="info-value"><span id="view_present">${addr.present || ''}</span><div class="edit-field"><input type="text" id="edit_present" value="${addr.present || ''}"></div></div><button class="edit-btn" onclick="editField('present')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">Permanent Address</div><div class="info-value"><span id="view_permanent">${addr.permanent || ''}</span><div class="edit-field"><input type="text" id="edit_permanent" value="${addr.permanent || ''}"></div></div><button class="edit-btn" onclick="editField('permanent')">Edit</button></div>
+                    <button class="save-btn" onclick="saveAddressInfo()">Save Changes</button>
+                </div>`;
+            }
+            else if (currentProfileSection === 'localGuardian') {
+                let lg = info.localGuardian || {};
+                content = `<div class="info-card"><h3>👨‍👦 Local Guardian</h3>
+                    <div class="info-row"><div class="info-label">Name</div><div class="info-value"><span id="view_lg_name">${lg.name || ''}</span><div class="edit-field"><input type="text" id="edit_lg_name" value="${lg.name || ''}"></div></div><button class="edit-btn" onclick="editField('lg_name')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">NID</div><div class="info-value"><span id="view_lg_nid">${lg.nid || ''}</span><div class="edit-field"><input type="text" id="edit_lg_nid" value="${lg.nid || ''}"></div></div><button class="edit-btn" onclick="editField('lg_nid')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">Mobile</div><div class="info-value"><span id="view_lg_mobile">${lg.mobile || ''}</span><div class="edit-field"><input type="text" id="edit_lg_mobile" value="${lg.mobile || ''}"></div></div><button class="edit-btn" onclick="editField('lg_mobile')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">Email</div><div class="info-value"><span id="view_lg_email">${lg.email || ''}</span><div class="edit-field"><input type="email" id="edit_lg_email" value="${lg.email || ''}"></div></div><button class="edit-btn" onclick="editField('lg_email')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">Address</div><div class="info-value"><span id="view_lg_address">${lg.address || ''}</span><div class="edit-field"><input type="text" id="edit_lg_address" value="${lg.address || ''}"></div></div><button class="edit-btn" onclick="editField('lg_address')">Edit</button></div>
+                    <button class="save-btn" onclick="saveLocalGuardian()">Save Changes</button>
+                </div>`;
+            }
+            else if (currentProfileSection === 'familyInfo') {
+                let f = info.familyInfo || {};
+                content = `<div class="info-card"><h3>👨‍👩‍👧 Family Information</h3>
+                    <h4>Father</h4>
+                    <div class="info-row"><div class="info-label">Name</div><div class="info-value"><span id="view_father_name">${f.father?.name || ''}</span><div class="edit-field"><input type="text" id="edit_father_name" value="${f.father?.name || ''}"></div></div><button class="edit-btn" onclick="editField('father_name')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">Mobile</div><div class="info-value"><span id="view_father_mobile">${f.father?.mobile || ''}</span><div class="edit-field"><input type="text" id="edit_father_mobile" value="${f.father?.mobile || ''}"></div></div><button class="edit-btn" onclick="editField('father_mobile')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">NID</div><div class="info-value"><span id="view_father_nid">${f.father?.nid || ''}</span><div class="edit-field"><input type="text" id="edit_father_nid" value="${f.father?.nid || ''}"></div></div><button class="edit-btn" onclick="editField('father_nid')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">Occupation</div><div class="info-value"><span id="view_father_occ">${f.father?.occupation || ''}</span><div class="edit-field"><input type="text" id="edit_father_occ" value="${f.father?.occupation || ''}"></div></div><button class="edit-btn" onclick="editField('father_occ')">Edit</button></div>
+                    <h4 style="margin-top:15px">Mother</h4>
+                    <div class="info-row"><div class="info-label">Name</div><div class="info-value"><span id="view_mother_name">${f.mother?.name || ''}</span><div class="edit-field"><input type="text" id="edit_mother_name" value="${f.mother?.name || ''}"></div></div><button class="edit-btn" onclick="editField('mother_name')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">Mobile</div><div class="info-value"><span id="view_mother_mobile">${f.mother?.mobile || ''}</span><div class="edit-field"><input type="text" id="edit_mother_mobile" value="${f.mother?.mobile || ''}"></div></div><button class="edit-btn" onclick="editField('mother_mobile')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">NID</div><div class="info-value"><span id="view_mother_nid">${f.mother?.nid || ''}</span><div class="edit-field"><input type="text" id="edit_mother_nid" value="${f.mother?.nid || ''}"></div></div><button class="edit-btn" onclick="editField('mother_nid')">Edit</button></div>
+                    <button class="save-btn" onclick="saveFamilyInfo()">Save Changes</button>
+                </div>`;
+            }
+            else if (currentProfileSection === 'educationInfo') {
+                let edu = info.educationInfo || {};
+                content = `<div class="info-card"><h3>🎓 Education Information</h3>
+                    <h4>Higher Secondary (HSC)</h4>
+                    <div class="info-row"><div class="info-label">Institute</div><div class="info-value"><span id="view_hsc_inst">${edu.hsc?.institute || ''}</span><div class="edit-field"><input type="text" id="edit_hsc_inst" value="${edu.hsc?.institute || ''}"></div></div><button class="edit-btn" onclick="editField('hsc_inst')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">Group</div><div class="info-value"><span id="view_hsc_group">${edu.hsc?.group || ''}</span><div class="edit-field"><input type="text" id="edit_hsc_group" value="${edu.hsc?.group || ''}"></div></div><button class="edit-btn" onclick="editField('hsc_group')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">Year</div><div class="info-value"><span id="view_hsc_year">${edu.hsc?.year || ''}</span><div class="edit-field"><input type="text" id="edit_hsc_year" value="${edu.hsc?.year || ''}"></div></div><button class="edit-btn" onclick="editField('hsc_year')">Edit</button></div>
+                    <h4 style="margin-top:15px">Secondary (SSC)</h4>
+                    <div class="info-row"><div class="info-label">Institute</div><div class="info-value"><span id="view_ssc_inst">${edu.ssc?.institute || ''}</span><div class="edit-field"><input type="text" id="edit_ssc_inst" value="${edu.ssc?.institute || ''}"></div></div><button class="edit-btn" onclick="editField('ssc_inst')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">Group</div><div class="info-value"><span id="view_ssc_group">${edu.ssc?.group || ''}</span><div class="edit-field"><input type="text" id="edit_ssc_group" value="${edu.ssc?.group || ''}"></div></div><button class="edit-btn" onclick="editField('ssc_group')">Edit</button></div>
+                    <div class="info-row"><div class="info-label">Year</div><div class="info-value"><span id="view_ssc_year">${edu.ssc?.year || ''}</span><div class="edit-field"><input type="text" id="edit_ssc_year" value="${edu.ssc?.year || ''}"></div></div><button class="edit-btn" onclick="editField('ssc_year')">Edit</button></div>
+                    <button class="save-btn" onclick="saveEducationInfo()">Save Changes</button>
+                </div>`;
+            }
+            else {
+                content = `<div class="info-card"><h3>${currentProfileSection.replace('Info',' Information')}</h3><p>No data found. You can add new information.</p><button class="add-btn" onclick="alert('Add new ${currentProfileSection}')">+ Add New</button></div>`;
+            }
+            document.getElementById('profileContentArea').innerHTML = content;
+        }
+
+        function editField(field) {
+            let viewElem = document.getElementById(`view_${field}`);
+            let editElem = document.querySelector(`#edit_${field}`)?.parentElement;
+            if (viewElem && editElem) {
+                viewElem.style.display = 'none';
+                editElem.style.display = 'block';
+            }
+        }
+
+        function savePersonInfo() {
+            let info = studentFullInfo[currentUser?.id] || studentFullInfo['0242420005104192'];
+            if (!info.personInfo) info.personInfo = {};
+            info.personInfo.name = document.getElementById('edit_name')?.value || info.personInfo.name;
+            info.personInfo.gender = document.getElementById('edit_gender')?.value || info.personInfo.gender;
+            info.personInfo.bloodGroup = document.getElementById('edit_bloodGroup')?.value || info.personInfo.bloodGroup;
+            info.personInfo.mobile = document.getElementById('edit_mobile')?.value || info.personInfo.mobile;
+            info.personInfo.personalEmail = document.getElementById('edit_personalEmail')?.value || info.personInfo.personalEmail;
+            info.personInfo.nationalId = document.getElementById('edit_nationalId')?.value || info.personInfo.nationalId;
+            info.personInfo.religion = document.getElementById('edit_religion')?.value || info.personInfo.religion;
+            info.personInfo.maritalStatus = document.getElementById('edit_maritalStatus')?.value || info.personInfo.maritalStatus;
+            studentFullInfo[currentUser?.id] = info;
+            localStorage.setItem('student_full_info', JSON.stringify(studentFullInfo));
+            alert('✅ Person information saved successfully!');
+            renderProfileContent();
+            document.getElementById('studentName').innerText = info.personInfo.name;
+            document.getElementById('studentAvatar').innerText = (info.personInfo.name || 'S').charAt(0).toUpperCase();
+        }
+
+        function saveAddressInfo() {
+            let info = studentFullInfo[currentUser?.id] || studentFullInfo['0242420005104192'];
+            if (!info.addressInfo) info.addressInfo = {};
+            info.addressInfo.present = document.getElementById('edit_present')?.value || info.addressInfo.present;
+            info.addressInfo.permanent = document.getElementById('edit_permanent')?.value || info.addressInfo.permanent;
+            studentFullInfo[currentUser?.id] = info;
+            localStorage.setItem('student_full_info', JSON.stringify(studentFullInfo));
+            alert('✅ Address information saved!');
+            renderProfileContent();
+        }
+
+        function saveLocalGuardian() {
+            let info = studentFullInfo[currentUser?.id] || studentFullInfo['0242420005104192'];
+            if (!info.localGuardian) info.localGuardian = {};
+            info.localGuardian.name = document.getElementById('edit_lg_name')?.value || info.localGuardian.name;
+            info.localGuardian.nid = document.getElementById('edit_lg_nid')?.value || info.localGuardian.nid;
+            info.localGuardian.mobile = document.getElementById('edit_lg_mobile')?.value || info.localGuardian.mobile;
+            info.localGuardian.email = document.getElementById('edit_lg_email')?.value || info.localGuardian.email;
+            info.localGuardian.address = document.getElementById('edit_lg_address')?.value || info.localGuardian.address;
+            studentFullInfo[currentUser?.id] = info;
+            localStorage.setItem('student_full_info', JSON.stringify(studentFullInfo));
+            alert('✅ Local guardian information saved!');
+            renderProfileContent();
+        }
+
+        function saveFamilyInfo() {
+            let info = studentFullInfo[currentUser?.id] || studentFullInfo['0242420005104192'];
+            if (!info.familyInfo) info.familyInfo = {};
+            if (!info.familyInfo.father) info.familyInfo.father = {};
+            if (!info.familyInfo.mother) info.familyInfo.mother = {};
+            info.familyInfo.father.name = document.getElementById('edit_father_name')?.value || info.familyInfo.father.name;
+            info.familyInfo.father.mobile = document.getElementById('edit_father_mobile')?.value || info.familyInfo.father.mobile;
+            info.familyInfo.father.nid = document.getElementById('edit_father_nid')?.value || info.familyInfo.father.nid;
+            info.familyInfo.father.occupation = document.getElementById('edit_father_occ')?.value || info.familyInfo.father.occupation;
+            info.familyInfo.mother.name = document.getElementById('edit_mother_name')?.value || info.familyInfo.mother.name;
+            info.familyInfo.mother.mobile = document.getElementById('edit_mother_mobile')?.value || info.familyInfo.mother.mobile;
+            info.familyInfo.mother.nid = document.getElementById('edit_mother_nid')?.value || info.familyInfo.mother.nid;
+            studentFullInfo[currentUser?.id] = info;
+            localStorage.setItem('student_full_info', JSON.stringify(studentFullInfo));
+            alert('✅ Family information saved!');
+            renderProfileContent();
+        }
+
+        function saveEducationInfo() {
+            let info = studentFullInfo[currentUser?.id] || studentFullInfo['0242420005104192'];
+            if (!info.educationInfo) info.educationInfo = {};
+            if (!info.educationInfo.hsc) info.educationInfo.hsc = {};
+            if (!info.educationInfo.ssc) info.educationInfo.ssc = {};
+            info.educationInfo.hsc.institute = document.getElementById('edit_hsc_inst')?.value || info.educationInfo.hsc.institute;
+            info.educationInfo.hsc.group = document.getElementById('edit_hsc_group')?.value || info.educationInfo.hsc.group;
+            info.educationInfo.hsc.year = document.getElementById('edit_hsc_year')?.value || info.educationInfo.hsc.year;
+            info.educationInfo.ssc.institute = document.getElementById('edit_ssc_inst')?.value || info.educationInfo.ssc.institute;
+            info.educationInfo.ssc.group = document.getElementById('edit_ssc_group')?.value || info.educationInfo.ssc.group;
+            info.educationInfo.ssc.year = document.getElementById('edit_ssc_year')?.value || info.educationInfo.ssc.year;
+            studentFullInfo[currentUser?.id] = info;
+            localStorage.setItem('student_full_info', JSON.stringify(studentFullInfo));
+            alert('✅ Education information saved!');
+            renderProfileContent();
+        }
+
+        function showStudentSection(section) {
+            let pay = payments[currentUser?.id] || { totalPayable: 466868, totalPaid: 435595, totalDue: 31273 };
+            let results = studentResults[currentUser?.id] || studentResults['0242420005104192'];
+            let info = studentFullInfo[currentUser?.id] || studentFullInfo['0242420005104192'];
+            
+            let titles = {
+                dashboard: 'Dashboard', profile: 'Student Profile', payment: 'Payment Ledger',
+                waiver: 'Waiver', clearance: 'Registration/Exam Clearance', courses: 'Registered Course',
+                result: 'Result & CGPA', routine: 'Routine', liveResult: 'Live Result',
+                teachingEvaluation: 'Teaching Evaluation', convocation: 'Convocation Apply',
+                transport: 'Transport Card Apply', scholarship: 'Scholarship', certificate: 'Certificate & Transcript',
+                resources: 'Learning Resources', laptop: 'Laptop', mentorMeeting: 'Mentor Meeting',
+                food: 'Nearest Food Hotel', wallet: 'Digital Wallet', healthTips: 'Health Tips', nearestMedical: 'Nearest Medical'
+            };
+            document.getElementById('studentPageTitle').innerHTML = titles[section] || 'Dashboard';
+            let content = '';
+
+            if (section === 'dashboard') {
+                let totalCredits = results?.credits?.reduce((a,b)=>a+b,0) || 75;
+                let totalCGPA = results?.sgpa ? (results.sgpa.reduce((a,b)=>a+b,0)/results.sgpa.length).toFixed(2) : 3.47;
+                content = `
+                    <div class="payment-stats">
+                        <div class="payment-card payable"><h4>Total Payable</h4><div class="amount">৳ ${pay.totalPayable.toLocaleString()}</div></div>
+                        <div class="payment-card paid"><h4>Total Paid</h4><div class="amount">৳ ${pay.totalPaid.toLocaleString()}</div></div>
+                        <div class="payment-card due"><h4>Total Due</h4><div class="amount">৳ ${pay.totalDue.toLocaleString()}</div></div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card"><h3>${results?.semesters?.length || 5}</h3><p>Semesters Completed</p></div>
+                        <div class="stat-card"><h3>${totalCredits}</h3><p>Total Credits Earned</p></div>
+                        <div class="stat-card"><h3>${totalCGPA}</h3><p>Overall CGPA</p></div>
+                    </div>
+                    <div class="routine-card"><h3>📅 Today's Routine - ${new Date().toLocaleDateString('en-US', { weekday: 'long' })}</h3>
+                        <table class="data-table"><tr><th>Time</th><th>Course</th><th>Room</th></tr>
+                        ${routineData[new Date().toLocaleDateString('en-US', { weekday: 'long' })] || '<tr><td colspan="3">No classes today</td></tr>'}
+                        </table>
+                    </div>
+                    <div class="chart-container"><h3>📊 Semester-wise CGPA Performance</h3><canvas id="cgpaChart"></canvas></div>
+                `;
+                setTimeout(() => {
+                    let ctx = document.getElementById('cgpaChart')?.getContext('2d');
+                    if(ctx && results?.semesters) {
+                        new Chart(ctx, { type: 'line', data: { labels: results.semesters, datasets: [{ label: 'CGPA', data: results.sgpa, borderColor: '#667eea', backgroundColor: 'rgba(102,126,234,0.1)', tension: 0.3, fill: true }] } });
+                    }
+                }, 100);
+            }
+            else if (section === 'profile') {
+                let p = info.personInfo || { name: currentUser?.name };
+                content = `
+                    <div class="profile-header">
+                        <h2>${p.name || currentUser?.name}</h2>
+                        <p>📞 ${p.mobile || '01754338509'} | 📧 ${p.diuEmail || currentUser?.id+'@diu.edu.bd'} | 🩸 ${p.bloodGroup || 'O+'}</p>
+                    </div>
+                    <div class="profile-nav">
+                        <div class="profile-nav-item ${currentProfileSection === 'personInfo' ? 'active' : ''}" onclick="showProfileSection('personInfo')">Person Information</div>
+                        <div class="profile-nav-item ${currentProfileSection === 'academicInfo' ? 'active' : ''}" onclick="showProfileSection('academicInfo')">Academic Information</div>
+                        <div class="profile-nav-item" onclick="alert('Payment Scheme coming soon')">Payment Scheme</div>
+                        <div class="profile-nav-item ${currentProfileSection === 'addressInfo' ? 'active' : ''}" onclick="showProfileSection('addressInfo')">Address Information</div>
+                        <div class="profile-nav-item ${currentProfileSection === 'localGuardian' ? 'active' : ''}" onclick="showProfileSection('localGuardian')">Local Guardian</div>
+                        <div class="profile-nav-item ${currentProfileSection === 'familyInfo' ? 'active' : ''}" onclick="showProfileSection('familyInfo')">Family Information</div>
+                        <div class="profile-nav-item ${currentProfileSection === 'educationInfo' ? 'active' : ''}" onclick="showProfileSection('educationInfo')">Education Information</div>
+                        <div class="profile-nav-item" onclick="alert('VISA Information coming soon')">VISA Information</div>
+                        <div class="profile-nav-item" onclick="alert('Passport Information coming soon')">Passport Information</div>
+                        <div class="profile-nav-item" onclick="alert('Credit Transfer coming soon')">Credit Transfer</div>
+                        <div class="profile-nav-item" onclick="alert('Bank Information coming soon')">Bank Information</div>
+                        <div class="profile-nav-item" onclick="alert('Expense Bearer coming soon')">Expense Bearer</div>
+                        <div class="profile-nav-item" onclick="alert('Skill Information coming soon')">Skill Information</div>
+                        <div class="profile-nav-item" onclick="alert('Job Experience coming soon')">Job Experience</div>
+                        <div class="profile-nav-item" onclick="alert('Publication coming soon')">Publication</div>
+                        <div class="profile-nav-item" onclick="alert('Award coming soon')">Award</div>
+                        <div class="profile-nav-item" onclick="alert('Research coming soon')">Research</div>
+                        <div class="profile-nav-item" onclick="alert('Review Document coming soon')">Review Document</div>
+                    </div>
+                    <div id="profileContentArea"></div>
+                `;
+                setTimeout(() => renderProfileContent(), 50);
+            }
+            else if (section === 'payment') {
+                let totalReceivable = paymentLedgerData.reduce((s,i)=>s+i.receivable,0);
+                let totalPaid = paymentLedgerData.reduce((s,i)=>s+i.paid,0);
+                content = `<div class="semester-selector"><label>Select Semester:</label><select id="paymentSemester"><option>Fall 2025, 253</option><option>Spring 2026, 261</option></select><button class="btn-primary" onclick="alert('Loading payment details...')">Search</button></div>
+                    <table class="data-table"><tr><th>SL</th><th>Transaction Date</th><th>Collected By</th><th>Head Description</th><th>Receivable</th><th>Paid</th><th>Other</th></tr>
+                    ${paymentLedgerData.map((item,i)=>`<tr><td>${i+1}</td><td>${item.date}</td><td>${item.collectedBy || '-'}</td><td>${item.description}</td><td>৳ ${item.receivable.toLocaleString()}</td><td>৳ ${item.paid.toLocaleString()}</td><td>-</td>`).join('')}
+                    <tr style="background:#f0f0f0;font-weight:bold"><td colspan="4">Total</td><td>৳ ${totalReceivable.toLocaleString()}</td><td>৳ ${totalPaid.toLocaleString()}</td><td>0.00</td></tr>
+                </table>`;
+            }
+            else if (section === 'waiver') {
+                content = `
+                    <div class="waiver-card"><h3>🎁 Semester Waiver - Spring 2026, 261</h3><div class="waiver-percent">25%</div><p>Waiver Category: Result Based Waiver (General/Dakhil/BTEB)</p><p>Waiver Rate: 25%</p><p>Is Full Waiver: No</p></div>
+                    <div class="waiver-card"><h3>🏆 Available Waivers at DIU</h3>
+                        <p><strong>1. Result Based Waiver:</strong> 25% - 100% based on CGPA (Min 3.00)</p>
+                        <p><strong>2. Need Based Waiver:</strong> For financially challenged students</p>
+                        <p><strong>3. Freedom Fighter Waiver:</strong> For descendants of freedom fighters (100%)</p>
+                        <p><strong>4. Sports Waiver:</strong> For national/international athletes (50%-100%)</p>
+                        <p><strong>5. Technical Scholarship:</strong> For programming contest winners</p>
+                        <p><strong>6. Merit Scholarship:</strong> For top performers (CGPA ≥ 3.80)</p>
+                        <p><strong>7. Dean's List Award:</strong> For semester GPA ≥ 3.75</p>
+                    </div>
+                    <div class="waiver-card"><h3>📊 Your Eligibility</h3>
+                        <p>✅ Result Based Waiver: <strong>25% (Current CGPA: 3.47, Min Required: 3.00)</strong></p>
+                        <p>⏳ Merit Scholarship: Need CGPA ≥ 3.80 (Current: 3.47)</p>
+                        <button class="btn-primary" onclick="alert('Waiver application submitted successfully!')">Apply for Waiver</button>
+                    </div>`;
+            }
+            else if (section === 'clearance') {
+                content = `<h3>📋 Registration / Exam Clearance</h3>
+                    <table class="data-table"><tr><th>SL</th><th>Semester</th><th>Registration</th><th>Mid-Term Exam</th><th>Final Exam</th></tr>
+                    <tr><td>1</td><td>Summer 2025 (252)</td><td>✔</td><td>✘</td><td>✔</td></tr>
+                    <tr><td>2</td><td>Fall 2025 (253)</td><td>✔</td><td>✘</td><td>✔</td></tr>
+                    <tr><td>3</td><td>Spring 2026 (261)</td><td>✔</td><td>✘</td><td>✘</td></tr>
+                </table>`;
+            }
+            else if (section === 'courses') {
+                content = `<div class="semester-selector"><label>Search Semester:</label><select id="courseSemester"><option>Spring 2026, 261</option><option>Fall 2025, 253</option></select><button class="btn-primary" onclick="alert('Loading courses...')">Search</button></div>
+                    <table class="data-table"><tr><th>SL</th><th>Course Code</th><th>Course Title</th><th>Credit</th><th>Type</th><th>Section</th><th>Teacher</th></tr>
+                    <tr><td>1</td><td>CSE228</td><td>Theory of Computation</td><td>3</td><td>REGULAR</td><td>67_M</td><td>Rowzatu Zannat</td></tr>
+                    <tr><td>2</td><td>CSE227</td><td>Systems Analysis and Design</td><td>3</td><td>REGULAR</td><td>67_M</td><td>Most. Hasna Hena</td></tr>
+                    <tr><td>3</td><td>CSE225</td><td>Data Communication</td><td>3</td><td>REGULAR</td><td>67_M</td><td>Zakia Sultana Zakia</td></tr>
+                    <tr><td>4</td><td>CSE224</td><td>Digital Logic Design Lab</td><td>1.5</td><td>REGULAR</td><td>67_M1</td><td>Engr. Golam Rabbany</td></tr>
+                    <tr><td>5</td><td>CSE223</td><td>Digital Logic Design</td><td>3</td><td>REGULAR</td><td>67_M</td><td>Engr. Golam Rabbany</td></tr>
+                </table>`;
+            }
+            else if (section === 'result') {
+                let selectedSemester = 'Spring 2026';
+                let courses = results?.courses?.[selectedSemester] || [];
+                let totalCredit = courses.reduce((s,c)=>s+c.credit,0);
+                let totalPoint = courses.reduce((s,c)=>s+(c.credit*c.gradePoint),0);
+                let sgpa = (totalPoint/totalCredit).toFixed(2);
+                content = `
+                    <div class="semester-selector">
+                        <label>Select Semester:</label>
+                        <select id="resultSemester" onchange="loadResult(this.value)">
+                            ${results?.semesters?.map(s => `<option value="${s}">${s}</option>`).join('')}
+                        </select>
+                        <button class="btn-primary" onclick="loadResult(document.getElementById('resultSemester').value)">Search</button>
+                    </div>
+                    <div class="service-card"><h4>Student Information</h4><p><strong>${currentUser?.name}</strong><br>B.Sc. in Computer Science & Engineering<br>Batch: 67 | Student ID: ${currentUser?.id} | Reg ID: 242-15-492<br>SGPA of <span id="selectedSemesterLabel">${selectedSemester}</span>: ${sgpa}</p></div>
+                    <h3>Result of <span id="resultSemesterLabel">${selectedSemester}</span></h3>
+                    <table class="data-table"><tr><th>SL</th><th>Course Code</th><th>Course Title</th><th>Credit</th><th>Grade</th><th>Grade Point</th></tr>
+                    ${courses.map((c,i)=>`<tr><td>${i+1}</td><td>${c.code}</td><td>${c.title}</td><td>${c.credit}</td><td>${c.grade}</td><td>${c.gradePoint}</td></tr>`).join('')}
+                    <tr style="background:#f0f0f0"><td colspan="3"><strong>Total Credit: ${totalCredit}</strong></td><td colspan="3"><strong>SGPA: ${sgpa}</strong></td></tr>
+                </table>
+                    <div class="service-card"><h4>📊 UGC Uniform Grading System</h4><table class="data-table"><tr><th>Marks (%)</th><th>Grade</th><th>Grade Point</th><th>Remarks</th></tr>
+                    <tr><td>80-100</td><td>A+</td><td>4.00</td><td>Outstanding</td></tr>
+                    <tr><td>75-79</td><td>A</td><td>3.75</td><td>Excellent</td></tr>
+                    <tr><td>70-74</td><td>A-</td><td>3.50</td><td>Very Good</td></tr>
+                    <tr><td>65-69</td><td>B+</td><td>3.25</td><td>Good</td></tr>
+                    <tr><td>60-64</td><td>B</td><td>3.00</td><td>Satisfactory</td></tr>
+                    <tr><td>55-59</td><td>B-</td><td>2.75</td><td>Above Average</td></tr>
+                    <tr><td>50-54</td><td>C+</td><td>2.50</td><td>Average</td></tr>
+                    <tr><td>45-49</td><td>C</td><td>2.25</td><td>Below Average</td></tr>
+                    <tr><td>40-44</td><td>D</td><td>2.00</td><td>Pass</td></tr>
+                    <tr><td>0-39</td><td>F</td><td>0.00</td><td>Fail</td></tr>
+                </table></div>
+                    <div class="service-card"><h4>📊 All Semesters Summary</h4><table class="data-table"><tr><th>Semester</th><th>Credits</th><th>SGPA</th></tr>
+                    ${results?.semesters?.map((s,i)=>`<tr><td>${s}</td><td>${results.credits[i]}</td><td>${results.sgpa[i]}</td></tr>`).join('')}
+                    <tr style="background:#f0f0f0"><td><strong>Total/CGPA</strong></td><td><strong>${results?.credits?.reduce((a,b)=>a+b,0)}</strong></td><td><strong>${(results?.sgpa?.reduce((a,b)=>a+b,0)/results?.sgpa?.length).toFixed(2)}</strong></td></tr>
+                </table></div>`;
+            }
+            else if (section === 'routine') {
+                content = `<div class="semester-selector"><label>Select Semester:</label><select id="routineSemester"><option>Spring 2026, 261</option><option>Fall 2025, 253</option></select><button class="btn-primary" onclick="alert('Loading routine...')">Search</button></div>
+                    <div class="routine-card"><h3>📅 Class Routine - 67_M</h3><p>Batch: 67 | Section: M | Total Courses: 5 | Routine Version: 6.0 | Classes per Week: 3</p>
+                    <button class="btn-primary" onclick="alert('PDF Download started')">Download PDF for 67_M</button></div>
+                    <div class="routine-day-card"><div class="routine-time">Monday</div><div>08:30-10:00: Theory of Computation (CSE228) - KT-318(B)</div><div>10:00-11:30: Systems Analysis and Design (CSE227) - KT-019</div></div>
+                    <div class="routine-day-card"><div class="routine-time">Tuesday</div><div>08:30-10:00: Theory of Computation (CSE228) - KT-310(B)</div></div>
+                    <div class="routine-day-card"><div class="routine-time">Wednesday</div><div>08:30-10:00: Digital Logic Design (CSE223) - KT-518</div><div>10:00-11:30: Digital Logic Design Lab (CSE224) - KT-510</div></div>
+                    <div class="routine-day-card"><div class="routine-time">Sunday</div><div>08:30-10:00: Theory of Computation (CSE228) - KT-019</div><div>10:00-11:30: Systems Analysis and Design (CSE227) - KT-019</div></div>`;
+            }
+            else if (section === 'liveResult') {
+                let courses = results?.courses?.['Spring 2026'] || [];
+                content = `<div class="semester-selector"><label>Select Semester:</label><select id="liveSemester"><option>Spring 2026, 261</option><option>Fall 2025, 253</option></select><button class="btn-primary" onclick="alert('Loading...')">Search</button></div>
+                    <table class="data-table"><tr><th>Action</th><th>SL</th><th>Course Code</th><th>Course Title</th><th>Credit</th><th>Section</th><th>Teacher</th></tr>
+                    ${courses.map((c,i)=>`<tr><td><button class="view-btn" onclick="showMarksModal('${c.code}')">View Result</button></td><td>${i+1}</td><td>${c.code}</td><td>${c.title}</td><td>${c.credit}</td><td>67_M</td><td>${c.teacher || 'Teacher'}</td></tr>`).join('')}
+                </table>`;
+            }
+            else if (section === 'teachingEvaluation') {
+                let evalStatus = teachingEval[currentUser?.id] || {};
+                let courses = results?.courses?.['Spring 2026'] || [];
+                content = `<div class="semester-selector"><label>Select Semester:</label><select id="evalSemester"><option>Spring 2026, 261</option></select><button class="btn-primary" onclick="alert('Loading...')">Search</button></div>
+                    <table class="data-table"><tr><th>Submit Status</th><th>Course Code</th><th>Course Title</th><th>Teacher</th><th>Action</th></tr>
+                    ${courses.map(c=>`<td><td>${evalStatus[c.code] ? '✅ Submitted' : '⏳ Pending'}</td><td>${c.code}</td><td>${c.title}</td><td>${c.teacher || 'Teacher'}</td><td><button class="btn-primary" onclick="openEvaluationModal('${c.code}')">Evaluate</button></td></tr>`).join('')}
+                </table>`;
+            }
+            else if (section === 'convocation') {
+                let totalCredits = results?.credits?.reduce((a,b)=>a+b,0) || 75;
+                let requiredCredits = 120;
+                let remaining = requiredCredits - totalCredits;
+                content = `<div class="service-card"><h3>🎓 Convocation Apply</h3><p><strong>Status:</strong> You are not eligible for Convocation!</p><p><strong>Need to complete:</strong> ${remaining} more credits (Current: ${totalCredits}/${requiredCredits} credits)</p><p><strong>CGPA Required:</strong> 3.00+ (Current: 3.47)</p><button class="btn-primary" onclick="alert('Check eligibility after completing credits')">Apply Now</button></div>`;
+            }
+            else if (section === 'transport') {
+                content = `<div class="service-card"><h3>🚌 Transport Card Application</h3><table class="data-table"><tr><th>Action</th><th>Student ID</th><th>Package Name</th><th>Location</th><th>Status</th><th>Payment Status</th></tr>
+                <tr><td><button class="btn-primary" onclick="alert('Apply for Transport Card')">Apply</button></td><td>${currentUser?.id}</td><td>Student Package</td><td>DSC</td><td>Pending</td><td>Pending</td></tr>
+                </table><p><strong>Contact Point:</strong> Transport Office, DSC | Email: transport-dsc@diu.edu.bd | Mobile: 01847140037</p>
+                <button class="btn-primary" onclick="alert('Application form opened')">Apply Now</button></div>`;
+            }
+            else if (section === 'scholarship') {
+                content = `<div class="service-card"><h3>🏆 Available Scholarships</h3><p>No Scholarships Available at this moment.</p><button class="btn-primary" onclick="alert('Scholarship application opened')">Apply for Scholarship</button></div>
+                    <div class="service-card"><h3>📋 Applied Scholarship Application</h3><table class="data-table"><tr><th>Action</th><th>Status</th><th>SL</th><th>Application ID</th><th>Applicant Name</th><th>Semester</th><th>Scholarship Type</th></tr>
+                    <tr><td><button class="view-btn" onclick="alert('Application Details:\nApplication ID: OT25231252\nStatus: Approved\nScholarship Type: Old Waiver\nSemester: Fall 2024')">View</button></td><td>✅ Approved</td><td>1</td><td>OT25231252</td><td>${currentUser?.name}</td><td>Fall 2024</td><td>Old Waiver</td></tr>
+                </table></div>`;
+            }
+            else if (section === 'certificate') {
+                content = `<div class="service-card"><h3>📜 Certificate & Transcript</h3><button class="btn-primary" onclick="alert('Apply for document')">Apply</button>
+                    <button class="btn-primary" style="margin-left:10px" onclick="alert('View applied documents')">Applied Document</button>
+                    <div class="service-card" style="margin-top:15px"><h4>⚠️ Required Documents Update</h4><p>• Your NID and NID Attachment are missing! <a href="#" onclick="alert('Update NID')">Click to update</a></p>
+                    <p>• Father's NID and NID Attachment are missing! <a href="#" onclick="alert('Update Father NID')">Click to update</a></p>
+                    <p>• Mother's NID and NID Attachment are missing! <a href="#" onclick="alert('Update Mother NID')">Click to update</a></p></div>
+                    <div class="service-card"><h4>Add Document</h4><div class="form-group"><label>Select Document</label><select><option>Board Copy - SSC Certificate</option><option>Board Copy - HSC Certificate</option></select></div>
+                    <button class="btn-primary" onclick="alert('Document applied!')">Apply for Document</button></div>`;
+            }
+            else if (section === 'resources') {
+                content = `<div class="service-card"><h3>📚 Learning Resources</h3><div style="display:flex;gap:15px;flex-wrap:wrap">
+                    <button class="btn-primary" onclick="window.open('https://library.daffodilvarsity.edu.bd/','_blank')">📖 Library</button>
+                    <button class="btn-primary" onclick="window.open('https://blc.daffodilvarsity.edu.bd/','_blank')">📚 BLC</button>
+                    <button class="btn-primary" onclick="window.open('https://goedu.daffodilvarsity.edu.bd/','_blank')">🎓 Go Edu</button>
+                    <button class="btn-primary" onclick="window.open('https://iou.daffodilvarsity.edu.bd/','_blank')">🌐 IOU</button>
+                </div></div>`;
+            }
+            else if (section === 'laptop') {
+                let totalCredits = results?.credits?.reduce((a,b)=>a+b,0) || 75;
+                let requiredCredits = 90;
+                let remaining = requiredCredits - totalCredits;
+                content = `<div class="service-card"><h3>💻 Laptop Scheme</h3><p><strong>Status:</strong> You are not yet eligible for Laptop.</p><p><strong>Need to complete:</strong> ${remaining} more credits (Current: ${totalCredits}/${requiredCredits} credits)</p><p><strong>Minimum CGPA required:</strong> 3.50 (Current: 3.47)</p><button class="btn-primary" onclick="alert('Check eligibility after completing credits')">Apply for Laptop</button></div>`;
+            }
+            else if (section === 'mentorMeeting') {
+                content = `<div class="service-card">
+                    <h3>👨‍🏫 Mentor Detail</h3>
+                    <p><strong>Name:</strong> Syada Tasmia Alvi</p>
+                    <p><strong>Mobile No:</strong> 01636817791</p>
+                    <p><strong>Email:</strong> syada.cse@diu.edu.bd</p>
+                    
+                    <div class="meeting-table">
+                        <h4>📅 Mentor Teacher Meetings with You</h4>
+                        <div class="semester-selector"><input type="text" placeholder="Search Semester"><button class="btn-primary">Search</button></div>
+                        <table class="data-table"><tr><th>SL</th><th>Meeting Date</th><th>Reason for meeting</th><th>Instruction / Action Taken</th><th>Remarks</th><th>Next Meeting Date</th><th>Next Meeting Time</th><th>File</th></tr>
+                        <tr><td colspan="8">No meetings scheduled yet</td></tr>
+                        </table>
+                    </div>
+                    
+                    <div class="meeting-table">
+                        <h4>👨‍👩‍👧 Mentor Teacher Meetings with Guardian</h4>
+                        <div class="semester-selector"><input type="text" placeholder="Search Semester"><button class="btn-primary">Search</button></div>
+                        <table class="data-table"><tr><th>SL</th><th>Guardian Type</th><th>Meeting Date</th><th>Reason for meeting</th><th>Instruction / Action Taken</th><th>Remarks</th><th>Next Meeting Date</th><th>Next Meeting Time</th><th>File</th></tr>
+                        <tr><td colspan="9">No meetings scheduled yet</td></tr>
+                        </table>
+                    </div>
+                    
+                    <div class="meeting-table">
+                        <h4>👨‍🏫 Mentor Teacher Meetings With Course Teacher</h4>
+                        <div class="semester-selector"><input type="text" placeholder="Search Semester"><button class="btn-primary">Search</button></div>
+                        <h5>Completed Meeting of Course Teacher</h5>
+                        <table class="data-table"><tr><th>SL</th><th>Course</th><th>Reason Title</th><th>Reason Detail</th><th>Request From Teacher</th><th>Request To Teacher</th><th>Request Date/Time</th><th>Counselling Date/Time</th><th>Counselling Remarks</th></tr>
+                        <tr><td colspan="9">No completed meetings</td></tr>
+                        </table>
+                        <h5 style="margin-top:15px">Pending Meeting of Course Teacher</h5>
+                        <table class="data-table"><tr><th>SL</th><th>Course</th><th>Reason Title</th><th>Reason Detail</th><th>Request From Teacher</th><th>Request To Teacher</th><th>Request Date/Time</th></tr>
+                        <tr><td colspan="7">No pending meetings</td></tr>
+                        </table>
+                    </div>
+                </div>`;
+            }
+            else if (section === 'food') {
+                content = `<h3>🍽️ Nearest Food Hotels Near DIU</h3>
+                    <div class="food-item"><span>🍕 Pizza Hut</span><span>📍 House 1, Road 2, Daffodil Smart City</span><span>⭐ 4.5 | 0.5 km</span><button class="order-btn" onclick="alert('Order placed! Track in Wallet')">Order</button></div>
+                    <div class="food-item"><span>🍔 Burger King</span><span>📍 Bashundhara City, Level 3</span><span>⭐ 4.3 | 0.8 km</span><button class="order-btn" onclick="alert('Order placed! Track in Wallet')">Order</button></div>
+                    <div class="food-item"><span>🍛 Kacchi Bhai</span><span>📍 Ashulia Main Road</span><span>⭐ 4.8 | 0.3 km</span><button class="order-btn" onclick="alert('Order placed! Track in Wallet')">Order</button></div>
+                    <div class="food-item"><span>🥘 Madras Cafe</span><span>📍 DIU Campus Gate</span><span>⭐ 4.4 | 0.6 km</span><button class="order-btn" onclick="alert('Order placed! Track in Wallet')">Order</button></div>
+                    <div class="food-item"><span>🍜 Noodle House</span><span>📍 DIU Food Court</span><span>⭐ 4.2 | 0.4 km</span><button class="order-btn" onclick="alert('Order placed! Track in Wallet')">Order</button></div>`;
+            }
+            else if (section === 'wallet') {
+                let balance = localStorage.getItem('walletBalance') || 5000;
+                content = `<div style="text-align:center"><div class="wallet-balance">$${balance}</div>
+                    <button class="btn-primary" onclick="let amt=prompt('Enter amount'); if(amt && !isNaN(amt)){localStorage.setItem('walletBalance', (parseInt(localStorage.getItem('walletBalance')||5000)+parseInt(amt))); showStudentSection('wallet');}">➕ Add Money</button>
+                    <button class="btn-primary" style="margin-left:10px" onclick="alert('Payment successful!')">💳 Pay with Wallet</button>
+                    <h4 style="margin-top:20px">Recent Transactions</h4>
+                    <div class="food-item"><span>📚 Course Registration</span><span>-$500</span><span>Apr 02, 2026</span></div>
+                    <div class="food-item"><span>🍕 Food Order - Pizza Hut</span><span>-$25</span><span>Apr 01, 2026</span></div>
+                    <div class="food-item"><span>➕ Added Money</span><span>+$1000</span><span>Mar 30, 2026</span></div></div>`;
+            }
+            else if (section === 'healthTips') {
+                content = `<div class="service-card">🚰 Drink 8 glasses of water daily</div>
+                    <div class="service-card">😴 Get 7-8 hours of sleep</div>
+                    <div class="service-card">🏃 Exercise for 30 minutes everyday</div>
+                    <div class="service-card">🥗 Eat fruits and vegetables</div>
+                    <div class="service-card">🧘 Practice meditation for mental health</div>
+                    <div class="service-card">📱 Take breaks from screens every hour</div>`;
+            }
+            else if (section === 'nearestMedical') {
+                content = `<div class="food-item"><span>🏥 DIU Medical Center</span><span>📍 Inside DIU Campus</span><span>🕐 24/7</span><span>📞 017XXXXXXX</span></div>
+                    <div class="food-item"><span>🏥 Enam Medical College</span><span>📍 Ashulia, Savar</span><span>🕐 24/7 Emergency</span><span>📞 02-XXXXXXXX</span></div>
+                    <div class="food-item"><span>🏥 Popular Diagnostic Center</span><span>📍 Baipail, Ashulia</span><span>🕐 8AM - 8PM</span><span>📞 017XXXXXXXX</span></div>
+                    <div class="food-item"><span>💊 Pharmacy Plus</span><span>📍 Near DIU Gate</span><span>🕐 24/7</span><span>📞 019XXXXXXXX</span></div>`;
+            }
+            document.getElementById('studentContent').innerHTML = content;
+        }
+
+        function loadResult(semester) {
+            let results = studentResults[currentUser?.id] || studentResults['0242420005104192'];
+            let courses = results?.courses?.[semester] || [];
+            let totalCredit = courses.reduce((s,c)=>s+c.credit,0);
+            let totalPoint = courses.reduce((s,c)=>s+(c.credit*c.gradePoint),0);
+            let sgpa = totalCredit > 0 ? (totalPoint/totalCredit).toFixed(2) : '0.00';
+            
+            document.getElementById('selectedSemesterLabel').innerText = semester;
+            document.getElementById('resultSemesterLabel').innerText = semester;
+            
+            let tableHtml = `<table class="data-table"><tr><th>SL</th><th>Course Code</th><th>Course Title</th><th>Credit</th><th>Grade</th><th>Grade Point</th></tr>`;
+            courses.forEach((c,i) => {
+                tableHtml += `<tr><td>${i+1}</td><td>${c.code}</td><td>${c.title}</td><td>${c.credit}</td><td>${c.grade}</td><td>${c.gradePoint}</td></tr>`;
+            });
+            tableHtml += `<tr style="background:#f0f0f0"><td colspan="3"><strong>Total Credit: ${totalCredit}</strong></td><td colspan="3"><strong>SGPA: ${sgpa}</strong></td></tr></table>`;
+            
+            document.querySelector('#studentContent .data-table').outerHTML = tableHtml;
+            alert(`📊 Result loaded for ${semester}\nSGPA: ${sgpa}\nTotal Credits: ${totalCredit}`);
+        }
+
+        function openEvaluationModal(course) {
+            currentEvalCourse = course;
+            let questionsHtml = `
+                <div class="question-card">
+                    <p><strong>1. Teaching Quality:</strong></p>
+                    <div><label class="rating-option"><input type="radio" name="q1" value="5"> ⭐⭐⭐⭐⭐ (Excellent)</label>
+                    <label class="rating-option"><input type="radio" name="q1" value="4"> ⭐⭐⭐⭐ (Good)</label>
+                    <label class="rating-option"><input type="radio" name="q1" value="3"> ⭐⭐⭐ (Average)</label>
+                    <label class="rating-option"><input type="radio" name="q1" value="2"> ⭐⭐ (Poor)</label>
+                    <label class="rating-option"><input type="radio" name="q1" value="1"> ⭐ (Very Poor)</label></div>
+                </div>
+                <div class="question-card">
+                    <p><strong>2. Course Content Quality:</strong></p>
+                    <div><label class="rating-option"><input type="radio" name="q2" value="5"> Excellent</label>
+                    <label class="rating-option"><input type="radio" name="q2" value="4"> Good</label>
+                    <label class="rating-option"><input type="radio" name="q2" value="3"> Average</label>
+                    <label class="rating-option"><input type="radio" name="q2" value="2"> Poor</label>
+                    <label class="rating-option"><input type="radio" name="q2" value="1"> Very Poor</label></div>
+                </div>
+                <div class="question-card">
+                    <p><strong>3. Communication & Interaction:</strong></p>
+                    <div><label class="rating-option"><input type="radio" name="q3" value="5"> Excellent</label>
+                    <label class="rating-option"><input type="radio" name="q3" value="4"> Good</label>
+                    <label class="rating-option"><input type="radio" name="q3" value="3"> Average</label>
+                    <label class="rating-option"><input type="radio" name="q3" value="2"> Poor</label>
+                    <label class="rating-option"><input type="radio" name="q3" value="1"> Very Poor</label></div>
+                </div>
+                <div class="question-card">
+                    <p><strong>4. Punctuality & Discipline:</strong></p>
+                    <div><label class="rating-option"><input type="radio" name="q4" value="5"> Excellent</label>
+                    <label class="rating-option"><input type="radio" name="q4" value="4"> Good</label>
+                    <label class="rating-option"><input type="radio" name="q4" value="3"> Average</label>
+                    <label class="rating-option"><input type="radio" name="q4" value="2"> Poor</label>
+                    <label class="rating-option"><input type="radio" name="q4" value="1"> Very Poor</label></div>
+                </div>
+                <div class="question-card">
+                    <p><strong>5. Overall Rating:</strong></p>
+                    <div><label class="rating-option"><input type="radio" name="q5" value="5"> ⭐⭐⭐⭐⭐ (5/5)</label>
+                    <label class="rating-option"><input type="radio" name="q5" value="4"> ⭐⭐⭐⭐ (4/5)</label>
+                    <label class="rating-option"><input type="radio" name="q5" value="3"> ⭐⭐⭐ (3/5)</label>
+                    <label class="rating-option"><input type="radio" name="q5" value="2"> ⭐⭐ (2/5)</label>
+                    <label class="rating-option"><input type="radio" name="q5" value="1"> ⭐ (1/5)</label></div>
+                </div>
+                <div class="form-group"><label>Additional Comments:</label><textarea id="evalComment" rows="3" placeholder="Write your feedback here..."></textarea></div>
+            `;
+            document.getElementById('evalQuestions').innerHTML = questionsHtml;
+            document.getElementById('evalModal').style.display = 'flex';
+        }
+
+        function submitEvaluation() {
+            let q1 = document.querySelector('input[name="q1"]:checked')?.value;
+            let q2 = document.querySelector('input[name="q2"]:checked')?.value;
+            let q3 = document.querySelector('input[name="q3"]:checked')?.value;
+            let q4 = document.querySelector('input[name="q4"]:checked')?.value;
+            let q5 = document.querySelector('input[name="q5"]:checked')?.value;
+            let comment = document.getElementById('evalComment')?.value;
+            
+            if (!q1 || !q2 || !q3 || !q4 || !q5) {
+                alert('Please answer all questions before submitting!');
+                return;
+            }
+            
+            let evalData = teachingEval[currentUser?.id] || {};
+            evalData[currentEvalCourse] = true;
+            teachingEval[currentUser.id] = evalData;
+            localStorage.setItem('teaching_eval', JSON.stringify(teachingEval));
+            
+            alert(`✅ Thank you for evaluating ${currentEvalCourse}!\n\nRatings:\nTeaching Quality: ${q1}/5\nCourse Content: ${q2}/5\nCommunication: ${q3}/5\nPunctuality: ${q4}/5\nOverall: ${q5}/5\n\nFeedback: ${comment || 'No comments'}`);
+            closeModal();
+            showStudentSection('teachingEvaluation');
+        }
+
+        function showMarksModal(course) {
+            let results = studentResults[currentUser?.id] || studentResults['0242420005104192'];
+            let marks = results?.courses?.['Spring 2026']?.find(c => c.code === course)?.marks || 
+                       { attendance: 94, quiz: 15, mid: 78, final: 82, assignment: 85, presentation: 80 };
+            let total = (marks.mid + marks.final + marks.assignment + marks.presentation) / 4;
+            let grade = total >= 80 ? 'A+' : total >= 75 ? 'A' : total >= 70 ? 'A-' : total >= 65 ? 'B+' : total >= 60 ? 'B' : 'C';
+            
+            let marksHtml = `
+                <div class="info-card">
+                    <h3>📊 ${course} Marks Details</h3>
+                    <div class="info-row"><div class="info-label">Attendance Percentage:</div><div class="info-value">${marks.attendance}%</div></div>
+                    <div class="info-row"><div class="info-label">Quiz 1:</div><div class="info-value">${marks.quiz || 15}</div></div>
+                    <div class="info-row"><div class="info-label">Quiz 2:</div><div class="info-value">${marks.quiz2 || 12}</div></div>
+                    <div class="info-row"><div class="info-label">Quiz Average:</div><div class="info-value">${Math.round((marks.quiz || 15)/2)}</div></div>
+                    <div class="info-row"><div class="info-label">Assignment:</div><div class="info-value">${marks.assignment || 85}</div></div>
+                    <div class="info-row"><div class="info-label">Presentation:</div><div class="info-value">${marks.presentation || 80}</div></div>
+                    <div class="info-row"><div class="info-label">Midterm:</div><div class="info-value">${marks.mid || 78}</div></div>
+                    <div class="info-row"><div class="info-label">Midterm Improvement:</div><div class="info-value">${marks.midImprove || 0}</div></div>
+                    <div class="info-row"><div class="info-label">Final Exam:</div><div class="info-value">${marks.final || 82}</div></div>
+                    <div class="info-row"><div class="info-label">Total Marks:</div><div class="info-value">${Math.round(total)}</div></div>
+                    <div class="info-row"><div class="info-label">Grade:</div><div class="info-value"><strong>${grade}</strong></div></div>
+                </div>
+            `;
+            document.getElementById('marksDetails').innerHTML = marksHtml;
+            document.getElementById('marksModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('evalModal').style.display = 'none';
+            currentEvalCourse = null;
+        }
+
+        function closeMarksModal() {
+            document.getElementById('marksModal').style.display = 'none';
+        }
+
+        function showTeacherSection(section) {
+            if (section === 'dashboard') {
+                document.getElementById('teacherContent').innerHTML = `<div class="service-card"><h3>Welcome ${currentUser?.name}</h3><div class="stats-grid"><div class="stat-card"><h3>${Object.values(users).filter(u=>u.role==='student').length}</h3><p>Total Students</p></div><div class="stat-card"><h3>5</h3><p>Active Courses</p></div></div></div>`;
+            } else if (section === 'profile') {
+                document.getElementById('teacherContent').innerHTML = `<div class="service-card"><h3>👤 Teacher Profile</h3><p><strong>Name:</strong> ${currentUser?.name}</p><p><strong>ID:</strong> ${currentUser?.id}</p><p><strong>Department:</strong> Computer Science & Engineering</p><p><strong>Designation:</strong> Assistant Professor</p></div>`;
+            } else if (section === 'courses') {
+                document.getElementById('teacherContent').innerHTML = `<div class="service-card"><h3>📚 My Courses</h3><table class="data-table"><tr><th>Course Code</th><th>Course Title</th><th>Section</th><th>Students</th></tr>
+                <tr><td>CSE228</td><td>Theory of Computation</td><td>67_M</td><td>30</td></tr>
+                <tr><td>CSE227</td><td>Systems Analysis and Design</td><td>67_M</td><td>30</td></tr>
+                <tr><td>CSE225</td><td>Data Communication</td><td>67_M</td><td>30</td></tr>
+                </table></div>`;
+            } else if (section === 'students') {
+                document.getElementById('teacherContent').innerHTML = `<div class="service-card"><h3>👨‍🎓 Student List</h3><table class="data-table"><tr><th>ID</th><th>Name</th><th>Email</th><th>Batch</th></tr>
+                    ${Object.entries(users).filter(([k,v]) => v.role === 'student').map(([k,v]) => `<tr><td>${k}</td><td>${v.name}</td><td>${v.email}</td><td>67</td></tr>`).join('')}
+                </table></div>`;
+            } else if (section === 'creditEntry') {
+                document.getElementById('teacherContent').innerHTML = `<div class="service-card"><h3>🎓 Credit Entry System</h3>
+                    <div class="form-group"><label>Student ID</label><input type="text" id="creditStudentId" placeholder="Enter Student ID"></div>
+                    <div class="form-group"><label>Semester</label><input type="text" id="creditSemester" placeholder="e.g., Fall 2025"></div>
+                    <div class="form-group"><label>Credits Earned</label><input type="number" id="creditAmount" placeholder="Credits"></div>
+                    <div class="form-group"><label>SGPA</label><input type="number" step="0.01" id="creditCGPA" placeholder="SGPA"></div>
+                    <button class="btn-primary" onclick="addStudentCredit()">Add Credits & Result</button>
+                    <p style="margin-top:15px;color:#666"><small>Note: This will update student's academic record</small></p></div>`;
+            }
+        }
+
+        function addStudentCredit() {
+            let sid = document.getElementById('creditStudentId')?.value;
+            let sem = document.getElementById('creditSemester')?.value;
+            let credits = parseFloat(document.getElementById('creditAmount')?.value);
+            let cgpa = parseFloat(document.getElementById('creditCGPA')?.value);
+            if (sid && sem && !isNaN(credits) && !isNaN(cgpa)) {
+                let results = studentResults[sid] || { semesters: [], sgpa: [], credits: [], courses: {} };
+                results.semesters.push(sem);
+                results.sgpa.push(cgpa);
+                results.credits.push(credits);
+                studentResults[sid] = results;
+                localStorage.setItem('student_results', JSON.stringify(studentResults));
+                alert(`✅ Credits and result added for ${sid}\nSemester: ${sem}\nCredits: ${credits}\nSGPA: ${cgpa}`);
+                document.getElementById('creditStudentId').value = '';
+                document.getElementById('creditSemester').value = '';
+                document.getElementById('creditAmount').value = '';
+                document.getElementById('creditCGPA').value = '';
+            } else { alert('❌ Please fill all fields correctly!'); }
+        }
+
+        function showAdminSection(section) {
+            if (section === 'dashboard') {
+                document.getElementById('adminContent').innerHTML = `<div class="service-card"><h3>👑 Admin Dashboard</h3><div class="stats-grid"><div class="stat-card"><h3>${Object.keys(users).length}</h3><p>Total Users</p></div>
+                    <div class="stat-card"><h3>${Object.values(users).filter(u=>u.role==='student').length}</h3><p>Students</p></div>
+                    <div class="stat-card"><h3>${Object.values(users).filter(u=>u.role==='teacher').length}</h3><p>Teachers</p></div></div></div>`;
+            } else if (section === 'users') {
+                document.getElementById('adminContent').innerHTML = `<div class="service-card"><h3>👥 Manage Users</h3><table class="data-table"><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr>
+                    ${Object.entries(users).map(([k,v]) => `<tr><td>${k}</td><td>${v.name}</td><td>${v.email}</td><td>${v.role}</td><td><button class="btn-primary" onclick="deleteUser('${k}')">Delete</button></td></tr>`).join('')}
+                </table><button class="btn-primary" style="margin-top:15px" onclick="alert('Add user form opened')">+ Add New User</button></div>`;
+            } else if (section === 'routine') {
+                document.getElementById('adminContent').innerHTML = `<div class="service-card"><h3>📅 Update Routine</h3>
+                    <div class="form-group"><label>Select Day</label><select id="routineDaySelect"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select></div>
+                    <div class="form-group"><label>Routine Details (HTML format)</label><textarea id="routineDetails" rows="8" style="width:100%;padding:10px;" placeholder='Example: <tr><th>Time</th><th>Course</th><th>Room</th></tr>
+                    <tr><td>08:30-10:00</td><td>Course Name</td><td>Room No</td></tr>'></textarea></div>
+                    <button class="btn-primary" onclick="updateRoutine()">Update Routine</button>
+                    <p style="margin-top:15px;color:#666"><small>Note: Use HTML table format for routine</small></p></div>`;
+            }
+        }
+
+        function updateRoutine() {
+            let day = document.getElementById('routineDaySelect')?.value;
+            let details = document.getElementById('routineDetails')?.value;
+            if (day && details) {
+                routineData[day] = details;
+                localStorage.setItem('routine_data', JSON.stringify(routineData));
+                alert(`✅ Routine updated for ${day}`);
+                document.getElementById('routineDetails').value = '';
+            } else { alert('❌ Please fill all fields!'); }
+        }
+
+        function deleteUser(id) {
+            if(confirm(`Delete user ${id}?`)) {
+                delete users[id];
+                localStorage.setItem('portal_users', JSON.stringify(users));
+                showAdminSection('users');
+                alert('User deleted!');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            currentUser = null;
+            document.getElementById('studentDashboard').style.display = 'none';
+            document.getElementById('teacherDashboard').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'none';
+            document.getElementById('welcomePage').style.display = 'flex';
+            alert('Logged out successfully!');
+        }
+
+        let saved = localStorage.getItem('currentUser');
+        if (saved) {
+            currentUser = JSON.parse(saved);
+            if (currentUser.role === 'student') {
+                document.getElementById('studentDashboard').style.display = 'block';
+                document.getElementById('studentName').innerText = currentUser.name;
+                document.getElementById('studentAvatar').innerText = currentUser.name.charAt(0).toUpperCase();
+                showStudentSection('dashboard');
+            } else if (currentUser.role === 'teacher') {
+                document.getElementById('teacherDashboard').style.display = 'block';
+                document.getElementById('teacherName').innerText = currentUser.name;
+                showTeacherSection('dashboard');
+            } else if (currentUser.role === 'admin') {
+                document.getElementById('adminDashboard').style.display = 'block';
+                document.getElementById('adminName').innerText = currentUser.name;
+                showAdminSection('dashboard');
+            }
+            document.getElementById('welcomePage').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
